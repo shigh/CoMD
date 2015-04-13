@@ -19,3 +19,13 @@
 # Doxygen directories
 src-mpi/html
 src-mpi/latex
+
+# Build junk
+.depend
+.depend.bak
+CoMD_info.h
+bin
+*.yaml
+
+# Emacs junk
+*~
