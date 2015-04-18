@@ -163,3 +163,10 @@ class ResultsParser(object):
         
         return res
             
+def results_df(file_names):
+    results = [ResultsParser(r) for r in file_names]
+    i = []
+    for rp in results:
+        i += rp.results_all_ranks()
+    df = pd.DataFrame(i).convert_objects(convert_numeric=True)
+    return df
