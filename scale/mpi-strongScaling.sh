@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TD=--temp 0 --delta 0
+TD='--temp 0 --delta 0'
 N=16
 
 # Simple strong scaling study with eam potential and 256,000 atoms

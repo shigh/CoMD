@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TD=--temp 0 --delta 0
+TD='--temp 0 --delta 0'
 N=16
 
 # Simple weak scaling study with eam potential and 32000 atoms per task
