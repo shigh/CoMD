@@ -19,7 +19,16 @@
 # Doxygen directories
 src-mpi/html
 src-mpi/latex
-.ipynb_checkpoints
+
+# Build junk
+.depend
+.depend.bak
+CoMD_info.h
+bin
 *.yaml
+.ipynb_checkpoints
 *.pyc
 TAGS
+
+# Emacs junk
+*~
