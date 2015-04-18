@@ -14,7 +14,7 @@ Build:
   using MPI: true
   Threading: none
   Double Precision: true
-Run Date/Time: 2015-04-18, 15:13:11
+Run Date/Time: 2015-04-18, 15:30:42
 
 Command Line Parameters:
   doeam: 1
@@ -67,145 +67,145 @@ Performance Results:
 Performance Results For Rank 0:
   Timer: total
     CallCount:  1
-    AvgPerCall: 103.1075
-    Total:      103.1075
-    PercentLoop:   100.85
+    AvgPerCall:  78.8138
+    Total:       78.8138
+    PercentLoop:   101.12
   Timer: loop
     CallCount:  1
-    AvgPerCall: 102.2404
-    Total:      102.2404
+    AvgPerCall:  77.9388
+    Total:       77.9388
     PercentLoop:   100.00
   Timer: timestep
     CallCount:  10
-    AvgPerCall:  10.2200
-    Total:      102.2004
-    PercentLoop:    99.96
+    AvgPerCall:   7.7938
+    Total:       77.9379
+    PercentLoop:   100.00
   Timer:   position
     CallCount:  100
     AvgPerCall:   0.0018
-    Total:        0.1831
-    PercentLoop:     0.18
+    Total:        0.1816
+    PercentLoop:     0.23
   Timer:   velocity
     CallCount:  200
-    AvgPerCall:   0.0014
-    Total:        0.2806
-    PercentLoop:     0.27
+    AvgPerCall:   0.0015
+    Total:        0.2948
+    PercentLoop:     0.38
   Timer:   redistribute
     CallCount:  101
-    AvgPerCall:   0.0942
-    Total:        9.5127
-    PercentLoop:     9.30
+    AvgPerCall:   0.0192
+    Total:        1.9367
+    PercentLoop:     2.48
   Timer:     atomHalo
     CallCount:  101
-    AvgPerCall:   0.0841
-    Total:        8.4919
-    PercentLoop:     8.31
+    AvgPerCall:   0.0089
+    Total:        0.9033
+    PercentLoop:     1.16
   Timer:   force
     CallCount:  101
-    AvgPerCall:   0.9150
-    Total:       92.4189
-    PercentLoop:    90.39
+    AvgPerCall:   0.7552
+    Total:       76.2705
+    PercentLoop:    97.86
   Timer:     eamHalo
     CallCount:  101
-    AvgPerCall:   0.1374
-    Total:       13.8806
-    PercentLoop:    13.58
+    AvgPerCall:   0.0055
+    Total:        0.5544
+    PercentLoop:     0.71
   Timer: commHalo
     CallCount:  606
-    AvgPerCall:   0.0363
-    Total:       21.9693
-    PercentLoop:    21.49
+    AvgPerCall:   0.0017
+    Total:        1.0581
+    PercentLoop:     1.36
   Timer: commReduce
     CallCount:  36
-    AvgPerCall:   0.0182
-    Total:        0.6540
-    PercentLoop:     0.64
+    AvgPerCall:   0.0009
+    Total:        0.0307
+    PercentLoop:     0.04
 Performance Results Across Ranks:
   Timer: total
-    MinRank: 175
-    MinTime: 103.0959
+    MinRank: 431
+    MinTime:  78.7718
     MaxRank: 0
-    MaxTime: 103.1075
-    AvgTime: 103.1056
-    StdevTime:   0.0019
+    MaxTime:  78.8138
+    AvgTime:  78.8111
+    StdevTime:   0.0071
   Timer: loop
-    MinRank: 161
-    MinTime: 102.2303
-    MaxRank: 404
-    MaxTime: 102.2409
-    AvgTime: 102.2401
-    StdevTime:   0.0018
+    MinRank: 416
+    MinTime:  77.8998
+    MaxRank: 248
+    MaxTime:  77.9388
+    AvgTime:  77.9376
+    StdevTime:   0.0068
   Timer: timestep
-    MinRank: 161
-    MinTime: 102.1909
-    MaxRank: 348
-    MaxTime: 102.2365
-    AvgTime: 102.2095
-    StdevTime:   0.0156
+    MinRank: 417
+    MinTime:  77.8992
+    MaxRank: 252
+    MaxTime:  77.9383
+    AvgTime:  77.9371
+    StdevTime:   0.0068
   Timer:   position
-    MinRank: 384
-    MinTime:   0.1627
-    MaxRank: 296
-    MaxTime:   1.1870
-    AvgTime:   0.1769
-    StdevTime:   0.0451
+    MinRank: 108
+    MinTime:   0.1662
+    MaxRank: 385
+    MaxTime:   0.1958
+    AvgTime:   0.1768
+    StdevTime:   0.0067
   Timer:   velocity
     MinRank: 385
-    MinTime:   0.2218
-    MaxRank: 118
-    MaxTime:   0.3074
-    AvgTime:   0.2790
-    StdevTime:   0.0187
+    MinTime:   0.2245
+    MaxRank: 438
+    MaxTime:   0.3057
+    AvgTime:   0.2833
+    StdevTime:   0.0196
   Timer:   redistribute
-    MinRank: 103
-    MinTime:   2.6098
-    MaxRank: 401
-    MaxTime:  20.2439
-    AvgTime:  10.3596
-    StdevTime:   4.6998
+    MinRank: 259
+    MinTime:   1.7234
+    MaxRank: 349
+    MaxTime:   2.2397
+    AvgTime:   1.9733
+    StdevTime:   0.1089
   Timer:     atomHalo
-    MinRank: 103
-    MinTime:   1.6026
-    MaxRank: 401
-    MaxTime:  19.2385
-    AvgTime:   9.3404
-    StdevTime:   4.7035
+    MinRank: 259
+    MinTime:   0.7224
+    MaxRank: 349
+    MaxTime:   1.2151
+    AvgTime:   0.9594
+    StdevTime:   0.1078
   Timer:   force
-    MinRank: 453
-    MinTime:  82.0706
-    MaxRank: 103
-    MaxTime:  99.8763
-    AvgTime:  91.9756
-    StdevTime:   4.7275
+    MinRank: 349
+    MinTime:  75.9933
+    MaxRank: 267
+    MaxTime:  76.4839
+    AvgTime:  76.2405
+    StdevTime:   0.1059
   Timer:     eamHalo
-    MinRank: 453
-    MinTime:   6.3731
-    MaxRank: 369
-    MaxTime:  22.9257
-    AvgTime:  14.6701
-    StdevTime:   4.3222
+    MinRank: 329
+    MinTime:   0.2963
+    MaxRank: 316
+    MaxTime:   0.6764
+    AvgTime:   0.4812
+    StdevTime:   0.1114
   Timer: commHalo
-    MinRank: 136
-    MinTime:  18.8565
-    MaxRank: 317
-    MaxTime:  25.4273
-    AvgTime:  23.5287
-    StdevTime:   1.5547
+    MinRank: 146
+    MinTime:   0.9224
+    MaxRank: 37
+    MaxTime:   1.2566
+    AvgTime:   1.0472
+    StdevTime:   0.0632
   Timer: commReduce
-    MinRank: 470
-    MinTime:   0.0630
-    MaxRank: 269
-    MaxTime:   0.7472
-    AvgTime:   0.2501
-    StdevTime:   0.2471
+    MinRank: 474
+    MinTime:   0.0256
+    MaxRank: 121
+    MaxTime:   0.0631
+    AvgTime:   0.0396
+    StdevTime:   0.0075
 Performance Global Update Rates:
   AtomUpdateRate:
-    AverageRate:  31.94
+    AverageRate:  24.36
     Units: us/atom/task
   AllAtomUpdateRate:
-    AverageRate:   0.06
+    AverageRate:   0.05
     Units: us/atom
   AtomRate:
-    AverageRate:  16.03
+    AverageRate:  21.02
     Units: atoms/us
 
