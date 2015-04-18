@@ -66,6 +66,20 @@ r"""Performance Results:
   TotalRanks: (?P<totalranks>\d+)
 """
 
+p_perf_global = \
+r"""Performance Global Update Rates:
+  AtomUpdateRate:
+    AverageRate:(?P<atomupdaterate>.+)
+    Units: us/atom/task
+  AllAtomUpdateRate:
+    AverageRate:(?P<allatomupdaterate>.+)
+    Units: us/atom
+  AtomRate:
+    AverageRate:(?P<atomrate>.+)
+    Units: atoms/us
+"""
+
+
 def clean_dict(d):
     for k,v in d.iteritems():
         d[k] = v.strip()
@@ -92,7 +106,8 @@ class ResultsParser(object):
                   p_sim_data,
                   p_decomp_data,
                   p_mem_data,
-                  p_perf_res]:
+                  p_perf_res,
+                  p_perf_global]:
             
             r = re.search(p, self.res)
             if r==None:
