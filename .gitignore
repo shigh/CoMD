@@ -20,3 +20,4 @@
 src-mpi/html
 src-mpi/latex
 .ipynb_checkpoints
+*.yaml
