@@ -3,7 +3,7 @@
 #PBS -l walltime=00:20:00
 #PBS -N mpi-weakscaling
 
-TD='--temp 600 --delta 0'
+TD='--temp 3000 --delta 0'
 N=16
 
 cd ${PBS_O_WORKDIR}
