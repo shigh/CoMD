@@ -34,12 +34,12 @@ r"""Command Line Parameters:
   xproc: (?P<xproc>\d+)
   yproc: (?P<yproc>\d+)
   zproc: (?P<zproc>\d+)
-  Lattice constant: -1 Angstroms
+  Lattice constant: -1 Angstroms\s*
   nSteps: (?P<nsteps>\d+)
   printRate: (?P<printRate>\d+)
-  Time step: (?P<timestep>\d+) fs
-  Initial Temperature: (?P<inittemp>.+)
-  Initial Delta: (?P<initdelta>.+)Angstroms
+  Time step: (?P<timestep>\d+) fs\s*
+  Initial Temperature: (?P<inittemp>.+)K\s*
+  Initial Delta: (?P<initdelta>.+)Angstroms\s*
 """
 
 p_sim_data = \
