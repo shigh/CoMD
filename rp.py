@@ -38,8 +38,8 @@ r"""Command Line Parameters:
   nSteps: (?P<nsteps>\d+)
   printRate: (?P<printRate>\d+)
   Time step: (?P<timestep>\d+) fs
-  Initial Temperature: 600 K
-  Initial Delta: 0 Angstroms
+  Initial Temperature: (?P<inittemp>.+)
+  Initial Delta: (?P<initdelta>.+)Angstroms
 """
 
 p_sim_data = \
