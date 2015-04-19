@@ -97,6 +97,7 @@ void createFccLattice(int nx, int ny, int nz, real_t lat, SimFlat* s)
                if (ry < localMin[1] || ry >= localMax[1]) continue;
                if (rz < localMin[2] || rz >= localMax[2]) continue;
                int id = ib+nb*(iz+nz*(iy+ny*(ix)));
+
                putAtomInBox(s->boxes, s->atoms, id, 0, rx, ry, rz, px, py, pz);
             }
 
