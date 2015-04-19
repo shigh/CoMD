@@ -11,7 +11,7 @@ nAtoms = n * n * n * 4.0
 
 # fit data
 m, b = np.polyfit(np.log10(nAtoms),np.log10(t),1)
-x = 10**np.arange(15)
+x = 10**np.arange(3,10)
 
 # Plots
 fig = plt.figure(figsize=(8.0, 4.25))

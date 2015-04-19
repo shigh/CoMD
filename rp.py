@@ -139,7 +139,7 @@ class ResultsParser(object):
             all_ranks_res.append(clean_dict(i.groupdict()))
         self.all_ranks_res = all_ranks_res
 
-    def results_r0(self):
+    def results_r0(self, df=True):
         
         res = []
         for r in self.r0_res:
@@ -149,9 +149,12 @@ class ResultsParser(object):
             i.update(r)
             res.append(i)
         
-        return res
+        if df:
+            return pd.DataFrame(res).convert_objects(convert_numeric=True)
+        else:
+            return res
     
-    def results_all_ranks(self):
+    def results_all_ranks(self, df=True):
         
         res = []
         for r in self.all_ranks_res:
@@ -160,13 +163,16 @@ class ResultsParser(object):
             i.update(self.sim_data)
             i.update(r)
             res.append(i)
-        
-        return res
+
+        if df:
+            return pd.DataFrame(res).convert_objects(convert_numeric=True)
+        else:
+            return res
             
 def results_df(file_names):
     results = [ResultsParser(r) for r in file_names]
     i = []
     for rp in results:
-        i += rp.results_all_ranks()
+        i += rp.results_all_ranks(df=False)
     df = pd.DataFrame(i).convert_objects(convert_numeric=True)
     return df
