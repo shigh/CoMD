@@ -1,6 +1,6 @@
 #!/bin/sh
 #PBS -l nodes=1:ppn=1:xe
-#PBS -l walltime=04:00:00
+#PBS -l walltime=01:00:00
 #PBS -N fLJ_nAtoms
 #PBS -e $PBS_JOBID.err
 #PBS -o $PBS_JOBID.out
@@ -18,7 +18,7 @@ cd $PBS_O_WORKDIR
 #        --lat 3.615 --temp 0 --delta 0 > fLJ_nx${n}_ny${n}_nz${n}.txt
 #done
 
-for ((n=100; n<=750; n+=250))
+for ((n=100; n<=500; n+=250))
 do
     aprun -n 1 ../../../bin/CoMD-mpi \
         --nx ${n} --ny ${n} --nz ${n} \
