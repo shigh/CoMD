@@ -1,0 +1,201 @@
+
+Mini-Application Name    : CoMD-mpi
+Mini-Application Version : 1.1
+Platform:
+  hostname: nid27560
+  kernel name: 'Linux'
+  kernel release: '3.0.101-0.31.1_1.0502.8394-cray_gem_s'
+  processor: 'x86_64'
+Build:
+  CC: '/opt/cray/craype/2.2.1/bin/cc'
+  compiler version: 'Cray C : Version 8.3.3  Mon Apr 13, 2015  16:17:55'
+  CFLAGS: ' -DDOUBLE -DDO_MPI -g -O3   '
+  LDFLAGS: ' -lm '
+  using MPI: true
+  Threading: none
+  Double Precision: true
+Run Date/Time: 2015-04-19, 09:06:13
+
+Command Line Parameters:
+  doeam: 0
+  potDir: pots
+  potName: Cu_u6.eam
+  potType: funcfl
+  nx: 160
+  ny: 160
+  nz: 160
+  xproc: 4
+  yproc: 4
+  zproc: 4
+  Lattice constant: -1 Angstroms
+  nSteps: 100
+  printRate: 10
+  Time step: 1 fs
+  Initial Temperature: 600 K
+  Initial Delta: 0 Angstroms
+
+Simulation data: 
+  Total atoms        : 16384000
+  Min global bounds  : [   0.0000000000,   0.0000000000,   0.0000000000 ]
+  Max global bounds  : [ 578.4000000000, 578.4000000000, 578.4000000000 ]
+
+Decomposition data: 
+  Processors         :      4,     4,     4
+  Local boxes        :     24,    24,    24 =    13824
+  Box size           : [   6.0250000000,   6.0250000000,   6.0250000000 ]
+  Box factor         : [   1.0410367171,   1.0410367171,   1.0410367171 ] 
+  Max Link Cell Occupancy: 32 of 64
+
+Potential data: 
+  Potential type   : Lennard-Jones
+  Species name     : Cu
+  Atomic number    : 29
+  Mass             : 63.55 amu
+  Lattice Type     : FCC
+  Lattice spacing  : 3.615 Angstroms
+  Cutoff           : 5.7875 Angstroms
+  Epsilon          : 0.167 eV
+  Sigma            : 2.315 Angstroms
+
+Memory data: 
+  Intrinsic atom footprint =   88 B/atom 
+  Total atom footprint     = 1375.000 MB ( 21.48 MB/node)
+  Link cell atom footprint =  74.250 MB/node
+  Link cell atom footprint =  94.402 MB/node (including halo cell data
+
+Performance Results:
+  TotalRanks: 64
+  ReportingTimeUnits: seconds
+Performance Results For Rank 0:
+  Timer: total
+    CallCount:  1
+    AvgPerCall: 510.4348
+    Total:      510.4348
+    PercentLoop:   101.09
+  Timer: loop
+    CallCount:  1
+    AvgPerCall: 504.9319
+    Total:      504.9319
+    PercentLoop:   100.00
+  Timer: timestep
+    CallCount:  10
+    AvgPerCall:  50.4930
+    Total:      504.9302
+    PercentLoop:   100.00
+  Timer:   position
+    CallCount:  100
+    AvgPerCall:   0.0305
+    Total:        3.0475
+    PercentLoop:     0.60
+  Timer:   velocity
+    CallCount:  200
+    AvgPerCall:   0.0172
+    Total:        3.4467
+    PercentLoop:     0.68
+  Timer:   redistribute
+    CallCount:  101
+    AvgPerCall:   0.1614
+    Total:       16.2997
+    PercentLoop:     3.23
+  Timer:     atomHalo
+    CallCount:  101
+    AvgPerCall:   0.0893
+    Total:        9.0214
+    PercentLoop:     1.79
+  Timer:   force
+    CallCount:  101
+    AvgPerCall:   4.7176
+    Total:      476.4740
+    PercentLoop:    94.36
+  Timer: commHalo
+    CallCount:  303
+    AvgPerCall:   0.0246
+    Total:        7.4544
+    PercentLoop:     1.48
+  Timer: commReduce
+    CallCount:  39
+    AvgPerCall:   0.2697
+    Total:       10.5179
+    PercentLoop:     2.08
+Performance Results Across Ranks:
+  Timer: total
+    MinRank: 63
+    MinTime: 510.4344
+    MaxRank: 12
+    MaxTime: 510.4357
+    AvgTime: 510.4346
+    StdevTime:   0.0003
+  Timer: loop
+    MinRank: 16
+    MinTime: 504.9317
+    MaxRank: 36
+    MaxTime: 504.9320
+    AvgTime: 504.9319
+    StdevTime:   0.0001
+  Timer: timestep
+    MinRank: 49
+    MinTime: 502.8525
+    MaxRank: 12
+    MaxTime: 504.9306
+    AvgTime: 504.1488
+    StdevTime:   0.8599
+  Timer:   position
+    MinRank: 41
+    MinTime:   1.7989
+    MaxRank: 52
+    MaxTime:   3.1512
+    AvgTime:   2.3422
+    StdevTime:   0.5150
+  Timer:   velocity
+    MinRank: 24
+    MinTime:   2.9582
+    MaxRank: 54
+    MaxTime:   4.6512
+    AvgTime:   3.5552
+    StdevTime:   0.4093
+  Timer:   redistribute
+    MinRank: 55
+    MinTime:  14.8797
+    MaxRank: 8
+    MaxTime:  18.1220
+    AvgTime:  16.6782
+    StdevTime:   0.8674
+  Timer:     atomHalo
+    MinRank: 55
+    MinTime:   6.7089
+    MaxRank: 8
+    MaxTime:  10.8293
+    AvgTime:   9.3226
+    StdevTime:   1.0772
+  Timer:   force
+    MinRank: 44
+    MinTime: 475.7901
+    MaxRank: 55
+    MaxTime: 484.2074
+    AvgTime: 478.2864
+    StdevTime:   3.2991
+  Timer: commHalo
+    MinRank: 55
+    MinTime:   3.1214
+    MaxRank: 8
+    MaxTime:   9.3243
+    AvgTime:   7.0690
+    StdevTime:   1.5322
+  Timer: commReduce
+    MinRank: 50
+    MinTime:   4.1737
+    MaxRank: 24
+    MaxTime:  11.9001
+    AvgTime:   9.5874
+    StdevTime:   2.5942
+Performance Global Update Rates:
+  AtomUpdateRate:
+    AverageRate:  19.69
+    Units: us/atom/task
+  AllAtomUpdateRate:
+    AverageRate:   0.31
+    Units: us/atom
+  AtomRate:
+    AverageRate:   3.25
+    Units: atoms/us
+

@@ -1,0 +1,1301 @@
+----------------------------------------
+Begin Torque Prologue on nid27639
+at Sun Apr 19 08:55:51 CDT 2015
+Job Id:			1580631.nid11293
+Username:		tra746
+Group:			TRAIN_jt1
+Job name:		mpi-strongscaling
+Requested resources:	neednodes=256:ppn=32:xe,nodes=256:ppn=32:xe,walltime=01:00:00
+Queue:			normal
+Account:		jt1
+End Torque Prologue:  0.027 elapsed
+----------------------------------------
+Sun Apr 19 08:55:59 2015: Starting Initialization
+
+
+Mini-Application Name    : CoMD-mpi
+Mini-Application Version : 1.1
+Platform:
+  hostname: nid27560
+  kernel name: 'Linux'
+  kernel release: '3.0.101-0.31.1_1.0502.8394-cray_gem_s'
+  processor: 'x86_64'
+Build:
+  CC: '/opt/cray/craype/2.2.1/bin/cc'
+  compiler version: 'Cray C : Version 8.3.3  Mon Apr 13, 2015  16:17:55'
+  CFLAGS: ' -DDOUBLE -DDO_MPI -g -O3   '
+  LDFLAGS: ' -lm '
+  using MPI: true
+  Threading: none
+  Double Precision: true
+Run Date/Time: 2015-04-19, 08:55:59
+
+Command Line Parameters:
+  doeam: 0
+  potDir: pots
+  potName: Cu_u6.eam
+  potType: funcfl
+  nx: 160
+  ny: 160
+  nz: 160
+  xproc: 4
+  yproc: 4
+  zproc: 4
+  Lattice constant: -1 Angstroms
+  nSteps: 100
+  printRate: 10
+  Time step: 1 fs
+  Initial Temperature: 0 K
+  Initial Delta: 0 Angstroms
+
+Simulation data: 
+  Total atoms        : 16384000
+  Min global bounds  : [   0.0000000000,   0.0000000000,   0.0000000000 ]
+  Max global bounds  : [ 578.4000000000, 578.4000000000, 578.4000000000 ]
+
+Decomposition data: 
+  Processors         :      4,     4,     4
+  Local boxes        :     24,    24,    24 =    13824
+  Box size           : [   6.0250000000,   6.0250000000,   6.0250000000 ]
+  Box factor         : [   1.0410367171,   1.0410367171,   1.0410367171 ] 
+  Max Link Cell Occupancy: 32 of 64
+
+Potential data: 
+  Potential type   : Lennard-Jones
+  Species name     : Cu
+  Atomic number    : 29
+  Mass             : 63.55 amu
+  Lattice Type     : FCC
+  Lattice spacing  : 3.615 Angstroms
+  Cutoff           : 5.7875 Angstroms
+  Epsilon          : 0.167 eV
+  Sigma            : 2.315 Angstroms
+
+Memory data: 
+  Intrinsic atom footprint =   88 B/atom 
+  Total atom footprint     = 1375.000 MB ( 21.48 MB/node)
+  Link cell atom footprint =  74.250 MB/node
+  Link cell atom footprint =  94.402 MB/node (including halo cell data
+
+
+Initial energy : -1.243619295093, atom count : 16384000 
+
+Sun Apr 19 08:56:04 2015: Initialization Finished
+
+Sun Apr 19 08:56:04 2015: Starting simulation
+
+#                                                                                         Performance
+#  Loop   Time(fs)       Total Energy   Potential Energy     Kinetic Energy  Temperature   (us/atom)     # Atoms
+      0       0.00    -1.243619295093    -1.243619295093     0.000000000000       0.0000     0.0000     16384000
+     10      10.00    -1.243619295093    -1.243619295093     0.000000000000       0.0000    19.2947     16384000
+     20      20.00    -1.243619295093    -1.243619295093     0.000000000000       0.0000    19.2962     16384000
+     30      30.00    -1.243619295093    -1.243619295093     0.000000000000       0.0000    19.2931     16384000
+     40      40.00    -1.243619295093    -1.243619295093     0.000000000000       0.0000    19.2952     16384000
+     50      50.00    -1.243619295093    -1.243619295093     0.000000000000       0.0000    19.2939     16384000
+     60      60.00    -1.243619295093    -1.243619295093     0.000000000000       0.0000    19.2948     16384000
+     70      70.00    -1.243619295093    -1.243619295093     0.000000000000       0.0000    19.2934     16384000
+     80      80.00    -1.243619295093    -1.243619295093     0.000000000000       0.0000    19.2924     16384000
+     90      90.00    -1.243619295093    -1.243619295093     0.000000000000       0.0000    19.2936     16384000
+    100     100.00    -1.243619295093    -1.243619295093     0.000000000000       0.0000    19.2967     16384000
+Sun Apr 19 09:04:18 2015: Ending simulation
+
+
+
+Simulation Validation:
+  Initial energy  : -1.243619295093
+  Final energy    : -1.243619295093
+  eFinal/eInitial : 1.000000
+  Final atom count : 16384000, no atoms lost
+
+
+Timings for Rank 0
+        Timer        # Calls    Avg/Call (s)   Total (s)    % Loop
+___________________________________________________________________
+total                      1     499.3185      499.3185      101.09
+loop                       1     493.9381      493.9381      100.00
+timestep                  10      49.3937      493.9366      100.00
+  position               100       0.0200        1.9977        0.40
+  velocity               200       0.0172        3.4406        0.70
+  redistribute           101       0.0998       10.0846        2.04
+    atomHalo             101       0.0281        2.8390        0.57
+  force                  101       4.7835      483.1361       97.81
+commHalo                 303       0.0043        1.3007        0.26
+commReduce                36       0.0021        0.0753        0.02
+
+Timing Statistics Across 64 Ranks:
+        Timer        Rank: Min(s)       Rank: Max(s)      Avg(s)    Stdev(s)
+_____________________________________________________________________________
+total               47:  499.3182      48:  499.3186    499.3184      0.0001
+loop                32:  493.9380      60:  493.9383    493.9381      0.0001
+timestep             0:  493.9366      52:  493.9373    493.9371      0.0001
+  position          26:    1.7600      20:    2.1589      1.9632      0.0920
+  velocity          40:    2.9009      18:    3.6214      3.3987      0.1949
+  redistribute      18:    9.6992      40:   11.0424     10.1391      0.3618
+    atomHalo        18:    2.4793      40:    3.7381      2.8956      0.3388
+  force             40:  482.5448      26:  483.5723    483.1658      0.2804
+commHalo            18:    0.9035      40:    2.2318      1.3650      0.3478
+commReduce          50:    0.0199      40:    0.1531      0.0702      0.0362
+
+---------------------------------------------------
+ Average atom update rate:      19.29 us/atom/task
+---------------------------------------------------
+
+
+---------------------------------------------------
+ Average all atom update rate:   0.30 us/atom
+---------------------------------------------------
+
+
+---------------------------------------------------
+ Average atom rate:              3.32 atoms/us
+---------------------------------------------------
+
+Sun Apr 19 09:04:18 2015: CoMD Ending
+
+Application 24039085 resources: utime ~31788s, stime ~276s, Rss ~111468, inblocks ~45213, outblocks ~75634
+Sun Apr 19 09:04:26 2015: Starting Initialization
+
+
+Mini-Application Name    : CoMD-mpi
+Mini-Application Version : 1.1
+Platform:
+  hostname: nid27560
+  kernel name: 'Linux'
+  kernel release: '3.0.101-0.31.1_1.0502.8394-cray_gem_s'
+  processor: 'x86_64'
+Build:
+  CC: '/opt/cray/craype/2.2.1/bin/cc'
+  compiler version: 'Cray C : Version 8.3.3  Mon Apr 13, 2015  16:17:55'
+  CFLAGS: ' -DDOUBLE -DDO_MPI -g -O3   '
+  LDFLAGS: ' -lm '
+  using MPI: true
+  Threading: none
+  Double Precision: true
+Run Date/Time: 2015-04-19, 09:04:26
+
+Command Line Parameters:
+  doeam: 0
+  potDir: pots
+  potName: Cu_u6.eam
+  potType: funcfl
+  nx: 160
+  ny: 160
+  nz: 160
+  xproc: 8
+  yproc: 8
+  zproc: 8
+  Lattice constant: -1 Angstroms
+  nSteps: 100
+  printRate: 10
+  Time step: 1 fs
+  Initial Temperature: 0 K
+  Initial Delta: 0 Angstroms
+
+Simulation data: 
+  Total atoms        : 16384000
+  Min global bounds  : [   0.0000000000,   0.0000000000,   0.0000000000 ]
+  Max global bounds  : [ 578.4000000000, 578.4000000000, 578.4000000000 ]
+
+Decomposition data: 
+  Processors         :      8,     8,     8
+  Local boxes        :     12,    12,    12 =     1728
+  Box size           : [   6.0250000000,   6.0250000000,   6.0250000000 ]
+  Box factor         : [   1.0410367171,   1.0410367171,   1.0410367171 ] 
+  Max Link Cell Occupancy: 32 of 64
+
+Potential data: 
+  Potential type   : Lennard-Jones
+  Species name     : Cu
+  Atomic number    : 29
+  Mass             : 63.55 amu
+  Lattice Type     : FCC
+  Lattice spacing  : 3.615 Angstroms
+  Cutoff           : 5.7875 Angstroms
+  Epsilon          : 0.167 eV
+  Sigma            : 2.315 Angstroms
+
+Memory data: 
+  Intrinsic atom footprint =   88 B/atom 
+  Total atom footprint     = 1375.000 MB (  2.69 MB/node)
+  Link cell atom footprint =   9.281 MB/node
+  Link cell atom footprint =  14.738 MB/node (including halo cell data
+
+
+Initial energy : -1.243619295058, atom count : 16384000 
+
+Sun Apr 19 09:04:27 2015: Initialization Finished
+
+Sun Apr 19 09:04:27 2015: Starting simulation
+
+#                                                                                         Performance
+#  Loop   Time(fs)       Total Energy   Potential Energy     Kinetic Energy  Temperature   (us/atom)     # Atoms
+      0       0.00    -1.243619295058    -1.243619295058     0.000000000000       0.0000     0.0000     16384000
+     10      10.00    -1.243619295058    -1.243619295058     0.000000000000       0.0000    23.2359     16384000
+     20      20.00    -1.243619295058    -1.243619295058     0.000000000000       0.0000    24.3629     16384000
+     30      30.00    -1.243619295058    -1.243619295058     0.000000000000       0.0000    26.5185     16384000
+     40      40.00    -1.243619295058    -1.243619295058     0.000000000000       0.0000    24.6863     16384000
+     50      50.00    -1.243619295058    -1.243619295058     0.000000000000       0.0000    25.5296     16384000
+     60      60.00    -1.243619295058    -1.243619295058     0.000000000000       0.0000    20.0869     16384000
+     70      70.00    -1.243619295058    -1.243619295058     0.000000000000       0.0000    20.0933     16384000
+     80      80.00    -1.243619295058    -1.243619295058     0.000000000000       0.0000    20.0983     16384000
+     90      90.00    -1.243619295058    -1.243619295058     0.000000000000       0.0000    20.0857     16384000
+    100     100.00    -1.243619295058    -1.243619295058     0.000000000000       0.0000    20.0867     16384000
+Sun Apr 19 09:05:39 2015: Ending simulation
+
+
+
+Simulation Validation:
+  Initial energy  : -1.243619295058
+  Final energy    : -1.243619295058
+  eFinal/eInitial : 1.000000
+  Final atom count : 16384000, no atoms lost
+
+
+Timings for Rank 0
+        Timer        # Calls    Avg/Call (s)   Total (s)    % Loop
+___________________________________________________________________
+total                      1      72.6481       72.6481      100.99
+loop                       1      71.9358       71.9358      100.00
+timestep                  10       7.1931       71.9309       99.99
+  position               100       0.0024        0.2386        0.33
+  velocity               200       0.0018        0.3683        0.51
+  redistribute           101       0.0811        8.1880       11.38
+    atomHalo             101       0.0705        7.1215        9.90
+  force                  101       0.6170       62.3180       86.63
+commHalo                 303       0.0224        6.7831        9.43
+commReduce                36       0.0404        1.4552        2.02
+
+Timing Statistics Across 512 Ranks:
+        Timer        Rank: Min(s)       Rank: Max(s)      Avg(s)    Stdev(s)
+_____________________________________________________________________________
+total              479:   72.6456     496:   72.6526     72.6469      0.0012
+loop               257:   71.9357     498:   71.9428     71.9360      0.0012
+timestep             0:   71.9309     500:   71.9388     71.9337      0.0015
+  position         481:    0.2028     340:    0.2520      0.2302      0.0094
+  velocity         484:    0.3165     161:    0.4273      0.3852      0.0198
+  redistribute     466:    8.0291     440:    9.6536      8.5581      0.5560
+    atomHalo       466:    6.9601     440:    8.6036      7.4992      0.5583
+  force            484:   62.2514     466:   62.4382     62.3570      0.0366
+commHalo           466:    6.6226     440:    8.2734      7.1623      0.5591
+commReduce         293:    0.0235     268:    1.4757      1.0379      0.5430
+
+---------------------------------------------------
+ Average atom update rate:      22.48 us/atom/task
+---------------------------------------------------
+
+
+---------------------------------------------------
+ Average all atom update rate:   0.04 us/atom
+---------------------------------------------------
+
+
+---------------------------------------------------
+ Average atom rate:             22.78 atoms/us
+---------------------------------------------------
+
+Sun Apr 19 09:05:39 2015: CoMD Ending
+
+Application 24039114 resources: utime ~35865s, stime ~2098s, Rss ~28928, inblocks ~383345, outblocks ~604918
+Sun Apr 19 09:05:53 2015: Starting Initialization
+
+
+Mini-Application Name    : CoMD-mpi
+Mini-Application Version : 1.1
+Platform:
+  hostname: nid27560
+  kernel name: 'Linux'
+  kernel release: '3.0.101-0.31.1_1.0502.8394-cray_gem_s'
+  processor: 'x86_64'
+Build:
+  CC: '/opt/cray/craype/2.2.1/bin/cc'
+  compiler version: 'Cray C : Version 8.3.3  Mon Apr 13, 2015  16:17:55'
+  CFLAGS: ' -DDOUBLE -DDO_MPI -g -O3   '
+  LDFLAGS: ' -lm '
+  using MPI: true
+  Threading: none
+  Double Precision: true
+Run Date/Time: 2015-04-19, 09:05:53
+
+Command Line Parameters:
+  doeam: 0
+  potDir: pots
+  potName: Cu_u6.eam
+  potType: funcfl
+  nx: 160
+  ny: 160
+  nz: 160
+  xproc: 16
+  yproc: 16
+  zproc: 16
+  Lattice constant: -1 Angstroms
+  nSteps: 100
+  printRate: 10
+  Time step: 1 fs
+  Initial Temperature: 0 K
+  Initial Delta: 0 Angstroms
+
+Simulation data: 
+  Total atoms        : 16384000
+  Min global bounds  : [   0.0000000000,   0.0000000000,   0.0000000000 ]
+  Max global bounds  : [ 578.4000000000, 578.4000000000, 578.4000000000 ]
+
+Decomposition data: 
+  Processors         :     16,    16,    16
+  Local boxes        :      6,     6,     6 =      216
+  Box size           : [   6.0250000000,   6.0250000000,   6.0250000000 ]
+  Box factor         : [   1.0410367171,   1.0410367171,   1.0410367171 ] 
+  Max Link Cell Occupancy: 32 of 64
+
+Potential data: 
+  Potential type   : Lennard-Jones
+  Species name     : Cu
+  Atomic number    : 29
+  Mass             : 63.55 amu
+  Lattice Type     : FCC
+  Lattice spacing  : 3.615 Angstroms
+  Cutoff           : 5.7875 Angstroms
+  Epsilon          : 0.167 eV
+  Sigma            : 2.315 Angstroms
+
+Memory data: 
+  Intrinsic atom footprint =   88 B/atom 
+  Total atom footprint     = 1375.000 MB (  0.34 MB/node)
+  Link cell atom footprint =   1.160 MB/node
+  Link cell atom footprint =   2.750 MB/node (including halo cell data
+
+
+Initial energy : -1.243619295078, atom count : 16384000 
+
+Sun Apr 19 09:05:53 2015: Initialization Finished
+
+Sun Apr 19 09:05:53 2015: Starting simulation
+
+#                                                                                         Performance
+#  Loop   Time(fs)       Total Energy   Potential Energy     Kinetic Energy  Temperature   (us/atom)     # Atoms
+      0       0.00    -1.243619295078    -1.243619295078     0.000000000000       0.0000     0.0000     16384000
+     10      10.00    -1.243619295078    -1.243619295078     0.000000000000       0.0000    21.8525     16384000
+     20      20.00    -1.243619295078    -1.243619295078     0.000000000000       0.0000    35.1911     16384000
+     30      30.00    -1.243619295078    -1.243619295078     0.000000000000       0.0000    23.9823     16384000
+     40      40.00    -1.243619295078    -1.243619295078     0.000000000000       0.0000    21.7037     16384000
+     50      50.00    -1.243619295078    -1.243619295078     0.000000000000       0.0000    22.9557     16384000
+     60      60.00    -1.243619295078    -1.243619295078     0.000000000000       0.0000    21.7171     16384000
+     70      70.00    -1.243619295078    -1.243619295078     0.000000000000       0.0000    21.7054     16384000
+     80      80.00    -1.243619295078    -1.243619295078     0.000000000000       0.0000    29.9630     16384000
+     90      90.00    -1.243619295078    -1.243619295078     0.000000000000       0.0000    38.0143     16384000
+    100     100.00    -1.243619295078    -1.243619295078     0.000000000000       0.0000    21.8021     16384000
+Sun Apr 19 09:06:04 2015: Ending simulation
+
+
+
+Simulation Validation:
+  Initial energy  : -1.243619295078
+  Final energy    : -1.243619295078
+  eFinal/eInitial : 1.000000
+  Final atom count : 16384000, no atoms lost
+
+
+Timings for Rank 0
+        Timer        # Calls    Avg/Call (s)   Total (s)    % Loop
+___________________________________________________________________
+total                      1      11.5779       11.5779      111.10
+loop                       1      10.4213       10.4213      100.00
+timestep                  10       1.0355       10.3555       99.37
+  position               100       0.0001        0.0148        0.14
+  velocity               200       0.0001        0.0215        0.21
+  redistribute           101       0.0156        1.5785       15.15
+    atomHalo             101       0.0141        1.4205       13.63
+  force                  101       0.0816        8.2416       79.08
+commHalo                 303       0.0044        1.3362       12.82
+commReduce                36       0.0203        0.7307        7.01
+
+Timing Statistics Across 4096 Ranks:
+        Timer        Rank: Min(s)       Rank: Max(s)      Avg(s)    Stdev(s)
+_____________________________________________________________________________
+total             2991:   10.5368       0:   11.5779     11.5099      0.2509
+loop              2929:   10.4196       8:   10.4214     10.4200      0.0005
+timestep          1265:   10.2781    1244:   10.4009     10.3249      0.0475
+  position        3820:    0.0140    2268:    0.0464      0.0146      0.0008
+  velocity          79:    0.0200    2323:    0.0783      0.0212      0.0017
+  redistribute     972:    1.2062    2061:    2.0646      1.6213      0.1754
+    atomHalo       972:    1.0450    2077:    1.9022      1.4612      0.1754
+  force           1107:    8.2335    2572:    8.3746      8.2541      0.0340
+commHalo           972:    0.9613    2059:    1.8174      1.3764      0.1749
+commReduce        2332:    0.2229     975:    1.0019      0.7061      0.1715
+
+---------------------------------------------------
+ Average atom update rate:      25.81 us/atom/task
+---------------------------------------------------
+
+
+---------------------------------------------------
+ Average all atom update rate:   0.01 us/atom
+---------------------------------------------------
+
+
+---------------------------------------------------
+ Average atom rate:            158.68 atoms/us
+---------------------------------------------------
+
+Sun Apr 19 09:06:04 2015: CoMD Ending
+
+Application 24039115 resources: utime ~48590s, stime ~14490s, Rss ~23228, inblocks ~2838183, outblocks ~4839495
+Sun Apr 19 09:06:13 2015: Starting Initialization
+
+
+Mini-Application Name    : CoMD-mpi
+Mini-Application Version : 1.1
+Platform:
+  hostname: nid27560
+  kernel name: 'Linux'
+  kernel release: '3.0.101-0.31.1_1.0502.8394-cray_gem_s'
+  processor: 'x86_64'
+Build:
+  CC: '/opt/cray/craype/2.2.1/bin/cc'
+  compiler version: 'Cray C : Version 8.3.3  Mon Apr 13, 2015  16:17:55'
+  CFLAGS: ' -DDOUBLE -DDO_MPI -g -O3   '
+  LDFLAGS: ' -lm '
+  using MPI: true
+  Threading: none
+  Double Precision: true
+Run Date/Time: 2015-04-19, 09:06:13
+
+Command Line Parameters:
+  doeam: 0
+  potDir: pots
+  potName: Cu_u6.eam
+  potType: funcfl
+  nx: 160
+  ny: 160
+  nz: 160
+  xproc: 4
+  yproc: 4
+  zproc: 4
+  Lattice constant: -1 Angstroms
+  nSteps: 100
+  printRate: 10
+  Time step: 1 fs
+  Initial Temperature: 600 K
+  Initial Delta: 0 Angstroms
+
+Simulation data: 
+  Total atoms        : 16384000
+  Min global bounds  : [   0.0000000000,   0.0000000000,   0.0000000000 ]
+  Max global bounds  : [ 578.4000000000, 578.4000000000, 578.4000000000 ]
+
+Decomposition data: 
+  Processors         :      4,     4,     4
+  Local boxes        :     24,    24,    24 =    13824
+  Box size           : [   6.0250000000,   6.0250000000,   6.0250000000 ]
+  Box factor         : [   1.0410367171,   1.0410367171,   1.0410367171 ] 
+  Max Link Cell Occupancy: 32 of 64
+
+Potential data: 
+  Potential type   : Lennard-Jones
+  Species name     : Cu
+  Atomic number    : 29
+  Mass             : 63.55 amu
+  Lattice Type     : FCC
+  Lattice spacing  : 3.615 Angstroms
+  Cutoff           : 5.7875 Angstroms
+  Epsilon          : 0.167 eV
+  Sigma            : 2.315 Angstroms
+
+Memory data: 
+  Intrinsic atom footprint =   88 B/atom 
+  Total atom footprint     = 1375.000 MB ( 21.48 MB/node)
+  Link cell atom footprint =  74.250 MB/node
+  Link cell atom footprint =  94.402 MB/node (including halo cell data
+
+
+Initial energy : -1.166063303493, atom count : 16384000 
+
+Sun Apr 19 09:06:19 2015: Initialization Finished
+
+Sun Apr 19 09:06:19 2015: Starting simulation
+
+#                                                                                         Performance
+#  Loop   Time(fs)       Total Energy   Potential Energy     Kinetic Energy  Temperature   (us/atom)     # Atoms
+      0       0.00    -1.166063303493    -1.243619295093     0.077555991600     600.0000     0.0000     16384000
+     10      10.00    -1.166059649998    -1.233159076942     0.067099426943     519.1044    19.2862     16384000
+     20      20.00    -1.166048438195    -1.208186829272     0.042138391077     325.9972    19.1569     16384000
+     30      30.00    -1.166037592757    -1.186591306644     0.020553713886     159.0106    23.1883     16384000
+     40      40.00    -1.166042096098    -1.183627107115     0.017585011017     136.0437    21.7979     16384000
+     50      50.00    -1.166051681923    -1.193705600548     0.027653918624     213.9403    18.9595     16384000
+     60      60.00    -1.166054640143    -1.202644130052     0.036589489909     283.0690    18.9571     16384000
+     70      70.00    -1.166052134706    -1.204891970005     0.038839835299     300.4784    18.9651     16384000
+     80      80.00    -1.166048798278    -1.203626095278     0.037577297000     290.7110    18.9700     16384000
+     90      90.00    -1.166048012212    -1.203829556265     0.037781544053     292.2911    18.9726     16384000
+    100     100.00    -1.166049804336    -1.206882560018     0.040832755683     315.8963    18.9847     16384000
+Sun Apr 19 09:14:44 2015: Ending simulation
+
+
+
+Simulation Validation:
+  Initial energy  : -1.166063303493
+  Final energy    : -1.166049804336
+  eFinal/eInitial : 0.999988
+  Final atom count : 16384000, no atoms lost
+
+
+Timings for Rank 0
+        Timer        # Calls    Avg/Call (s)   Total (s)    % Loop
+___________________________________________________________________
+total                      1     510.4348      510.4348      101.09
+loop                       1     504.9319      504.9319      100.00
+timestep                  10      50.4930      504.9302      100.00
+  position               100       0.0305        3.0475        0.60
+  velocity               200       0.0172        3.4467        0.68
+  redistribute           101       0.1614       16.2997        3.23
+    atomHalo             101       0.0893        9.0214        1.79
+  force                  101       4.7176      476.4740       94.36
+commHalo                 303       0.0246        7.4544        1.48
+commReduce                39       0.2697       10.5179        2.08
+
+Timing Statistics Across 64 Ranks:
+        Timer        Rank: Min(s)       Rank: Max(s)      Avg(s)    Stdev(s)
+_____________________________________________________________________________
+total               63:  510.4344      12:  510.4357    510.4346      0.0003
+loop                16:  504.9317      36:  504.9320    504.9319      0.0001
+timestep            49:  502.8525      12:  504.9306    504.1488      0.8599
+  position          41:    1.7989      52:    3.1512      2.3422      0.5150
+  velocity          24:    2.9582      54:    4.6512      3.5552      0.4093
+  redistribute      55:   14.8797       8:   18.1220     16.6782      0.8674
+    atomHalo        55:    6.7089       8:   10.8293      9.3226      1.0772
+  force             44:  475.7901      55:  484.2074    478.2864      3.2991
+commHalo            55:    3.1214       8:    9.3243      7.0690      1.5322
+commReduce          50:    4.1737      24:   11.9001      9.5874      2.5942
+
+---------------------------------------------------
+ Average atom update rate:      19.69 us/atom/task
+---------------------------------------------------
+
+
+---------------------------------------------------
+ Average all atom update rate:   0.31 us/atom
+---------------------------------------------------
+
+
+---------------------------------------------------
+ Average atom rate:              3.25 atoms/us
+---------------------------------------------------
+
+Sun Apr 19 09:14:44 2015: CoMD Ending
+
+Application 24039116 network throttled: 4 nodes throttled, 00:01:24 node-seconds
+Application 24039116 balanced injection 100, after throttle 63
+Application 24039116 resources: utime ~31898s, stime ~819s, Rss ~111468, inblocks ~45213, outblocks ~75634
+Sun Apr 19 09:14:52 2015: Starting Initialization
+
+
+Mini-Application Name    : CoMD-mpi
+Mini-Application Version : 1.1
+Platform:
+  hostname: nid27560
+  kernel name: 'Linux'
+  kernel release: '3.0.101-0.31.1_1.0502.8394-cray_gem_s'
+  processor: 'x86_64'
+Build:
+  CC: '/opt/cray/craype/2.2.1/bin/cc'
+  compiler version: 'Cray C : Version 8.3.3  Mon Apr 13, 2015  16:17:55'
+  CFLAGS: ' -DDOUBLE -DDO_MPI -g -O3   '
+  LDFLAGS: ' -lm '
+  using MPI: true
+  Threading: none
+  Double Precision: true
+Run Date/Time: 2015-04-19, 09:14:52
+
+Command Line Parameters:
+  doeam: 0
+  potDir: pots
+  potName: Cu_u6.eam
+  potType: funcfl
+  nx: 160
+  ny: 160
+  nz: 160
+  xproc: 8
+  yproc: 8
+  zproc: 8
+  Lattice constant: -1 Angstroms
+  nSteps: 100
+  printRate: 10
+  Time step: 1 fs
+  Initial Temperature: 600 K
+  Initial Delta: 0 Angstroms
+
+Simulation data: 
+  Total atoms        : 16384000
+  Min global bounds  : [   0.0000000000,   0.0000000000,   0.0000000000 ]
+  Max global bounds  : [ 578.4000000000, 578.4000000000, 578.4000000000 ]
+
+Decomposition data: 
+  Processors         :      8,     8,     8
+  Local boxes        :     12,    12,    12 =     1728
+  Box size           : [   6.0250000000,   6.0250000000,   6.0250000000 ]
+  Box factor         : [   1.0410367171,   1.0410367171,   1.0410367171 ] 
+  Max Link Cell Occupancy: 32 of 64
+
+Potential data: 
+  Potential type   : Lennard-Jones
+  Species name     : Cu
+  Atomic number    : 29
+  Mass             : 63.55 amu
+  Lattice Type     : FCC
+  Lattice spacing  : 3.615 Angstroms
+  Cutoff           : 5.7875 Angstroms
+  Epsilon          : 0.167 eV
+  Sigma            : 2.315 Angstroms
+
+Memory data: 
+  Intrinsic atom footprint =   88 B/atom 
+  Total atom footprint     = 1375.000 MB (  2.69 MB/node)
+  Link cell atom footprint =   9.281 MB/node
+  Link cell atom footprint =  14.738 MB/node (including halo cell data
+
+
+Initial energy : -1.166063303458, atom count : 16384000 
+
+Sun Apr 19 09:14:53 2015: Initialization Finished
+
+Sun Apr 19 09:14:53 2015: Starting simulation
+
+#                                                                                         Performance
+#  Loop   Time(fs)       Total Energy   Potential Energy     Kinetic Energy  Temperature   (us/atom)     # Atoms
+      0       0.00    -1.166063303458    -1.243619295058     0.077555991600     600.0000     0.0000     16384000
+     10      10.00    -1.166059649998    -1.233159076942     0.067099426943     519.1044    20.0865     16384000
+     20      20.00    -1.166048438195    -1.208186829272     0.042138391077     325.9972    19.9428     16384000
+     30      30.00    -1.166037592757    -1.186591306644     0.020553713886     159.0106    19.8073     16384000
+     40      40.00    -1.166042096098    -1.183627107115     0.017585011017     136.0437    19.7808     16384000
+     50      50.00    -1.166051681923    -1.193705600548     0.027653918624     213.9403    19.7453     16384000
+     60      60.00    -1.166054640143    -1.202644130052     0.036589489909     283.0690    19.7455     16384000
+     70      70.00    -1.166052134706    -1.204891970005     0.038839835299     300.4784    19.7380     16384000
+     80      80.00    -1.166048798278    -1.203626095278     0.037577297000     290.7110    19.7617     16384000
+     90      90.00    -1.166048012212    -1.203829556265     0.037781544053     292.2911    19.7530     16384000
+    100     100.00    -1.166049804336    -1.206882560018     0.040832755683     315.8963    19.7880     16384000
+Sun Apr 19 09:15:56 2015: Ending simulation
+
+
+
+Simulation Validation:
+  Initial energy  : -1.166063303458
+  Final energy    : -1.166049804336
+  eFinal/eInitial : 0.999988
+  Final atom count : 16384000, no atoms lost
+
+
+Timings for Rank 0
+        Timer        # Calls    Avg/Call (s)   Total (s)    % Loop
+___________________________________________________________________
+total                      1      64.1334       64.1334      101.14
+loop                       1      63.4086       63.4086      100.00
+timestep                  10       6.3408       63.4077      100.00
+  position               100       0.0025        0.2508        0.40
+  velocity               200       0.0019        0.3813        0.60
+  redistribute           101       0.0188        1.9031        3.00
+    atomHalo             101       0.0083        0.8407        1.33
+  force                  101       0.6082       61.4328       96.88
+commHalo                 303       0.0017        0.5026        0.79
+commReduce                39       0.0019        0.0736        0.12
+
+Timing Statistics Across 512 Ranks:
+        Timer        Rank: Min(s)       Rank: Max(s)      Avg(s)    Stdev(s)
+_____________________________________________________________________________
+total              359:   64.1308     496:   64.1371     64.1321      0.0012
+loop               448:   63.4086     508:   63.4147     63.4088      0.0011
+timestep             0:   63.4077     508:   63.4143     63.4084      0.0011
+  position         505:    0.2175     212:    0.2583      0.2371      0.0074
+  velocity         456:    0.3441     337:    0.4281      0.3988      0.0153
+  redistribute     337:    1.8016      88:    1.9772      1.8705      0.0354
+    atomHalo       337:    0.7431      88:    0.9125      0.8083      0.0339
+  force            108:   61.3988     273:   61.5361     61.4752      0.0293
+commHalo           337:    0.4003     104:    0.5747      0.4701      0.0334
+commReduce         219:    0.0383      46:    0.0806      0.0611      0.0066
+
+---------------------------------------------------
+ Average atom update rate:      19.82 us/atom/task
+---------------------------------------------------
+
+
+---------------------------------------------------
+ Average all atom update rate:   0.04 us/atom
+---------------------------------------------------
+
+
+---------------------------------------------------
+ Average atom rate:             25.84 atoms/us
+---------------------------------------------------
+
+Sun Apr 19 09:15:56 2015: CoMD Ending
+
+Application 24039298 resources: utime ~31566s, stime ~2065s, Rss ~29244, inblocks ~383327, outblocks ~604919
+Sun Apr 19 09:16:11 2015: Starting Initialization
+
+
+Mini-Application Name    : CoMD-mpi
+Mini-Application Version : 1.1
+Platform:
+  hostname: nid27560
+  kernel name: 'Linux'
+  kernel release: '3.0.101-0.31.1_1.0502.8394-cray_gem_s'
+  processor: 'x86_64'
+Build:
+  CC: '/opt/cray/craype/2.2.1/bin/cc'
+  compiler version: 'Cray C : Version 8.3.3  Mon Apr 13, 2015  16:17:55'
+  CFLAGS: ' -DDOUBLE -DDO_MPI -g -O3   '
+  LDFLAGS: ' -lm '
+  using MPI: true
+  Threading: none
+  Double Precision: true
+Run Date/Time: 2015-04-19, 09:16:11
+
+Command Line Parameters:
+  doeam: 0
+  potDir: pots
+  potName: Cu_u6.eam
+  potType: funcfl
+  nx: 160
+  ny: 160
+  nz: 160
+  xproc: 16
+  yproc: 16
+  zproc: 16
+  Lattice constant: -1 Angstroms
+  nSteps: 100
+  printRate: 10
+  Time step: 1 fs
+  Initial Temperature: 600 K
+  Initial Delta: 0 Angstroms
+
+Simulation data: 
+  Total atoms        : 16384000
+  Min global bounds  : [   0.0000000000,   0.0000000000,   0.0000000000 ]
+  Max global bounds  : [ 578.4000000000, 578.4000000000, 578.4000000000 ]
+
+Decomposition data: 
+  Processors         :     16,    16,    16
+  Local boxes        :      6,     6,     6 =      216
+  Box size           : [   6.0250000000,   6.0250000000,   6.0250000000 ]
+  Box factor         : [   1.0410367171,   1.0410367171,   1.0410367171 ] 
+  Max Link Cell Occupancy: 32 of 64
+
+Potential data: 
+  Potential type   : Lennard-Jones
+  Species name     : Cu
+  Atomic number    : 29
+  Mass             : 63.55 amu
+  Lattice Type     : FCC
+  Lattice spacing  : 3.615 Angstroms
+  Cutoff           : 5.7875 Angstroms
+  Epsilon          : 0.167 eV
+  Sigma            : 2.315 Angstroms
+
+Memory data: 
+  Intrinsic atom footprint =   88 B/atom 
+  Total atom footprint     = 1375.000 MB (  0.34 MB/node)
+  Link cell atom footprint =   1.160 MB/node
+  Link cell atom footprint =   2.750 MB/node (including halo cell data
+
+
+Initial energy : -1.166063303478, atom count : 16384000 
+
+Sun Apr 19 09:16:11 2015: Initialization Finished
+
+Sun Apr 19 09:16:11 2015: Starting simulation
+
+#                                                                                         Performance
+#  Loop   Time(fs)       Total Energy   Potential Energy     Kinetic Energy  Temperature   (us/atom)     # Atoms
+      0       0.00    -1.166063303478    -1.243619295078     0.077555991600     600.0000     0.0000     16384000
+     10      10.00    -1.166059649998    -1.233159076942     0.067099426943     519.1044    21.8171     16384000
+     20      20.00    -1.166048438195    -1.208186829272     0.042138391077     325.9972    21.7340     16384000
+     30      30.00    -1.166037592757    -1.186591306644     0.020553713886     159.0106    21.7673     16384000
+     40      40.00    -1.166042096098    -1.183627107115     0.017585011017     136.0437    22.2147     16384000
+     50      50.00    -1.166051681923    -1.193705600548     0.027653918624     213.9403    21.6130     16384000
+     60      60.00    -1.166054640143    -1.202644130052     0.036589489909     283.0690    21.5586     16384000
+     70      70.00    -1.166052134706    -1.204891970005     0.038839835299     300.4784    22.0882     16384000
+     80      80.00    -1.166048798278    -1.203626095278     0.037577297000     290.7110    21.5606     16384000
+     90      90.00    -1.166048012212    -1.203829556265     0.037781544053     292.2911    22.0343     16384000
+    100     100.00    -1.166049804336    -1.206882560018     0.040832755683     315.8963    21.5781     16384000
+Sun Apr 19 09:16:19 2015: Ending simulation
+
+
+
+Simulation Validation:
+  Initial energy  : -1.166063303478
+  Final energy    : -1.166049804336
+  eFinal/eInitial : 0.999988
+  Final atom count : 16384000, no atoms lost
+
+
+Timings for Rank 0
+        Timer        # Calls    Avg/Call (s)   Total (s)    % Loop
+___________________________________________________________________
+total                      1      12.1115       12.1115      138.79
+loop                       1       8.7266        8.7266      100.00
+timestep                  10       0.8719        8.7186       99.91
+  position               100       0.0001        0.0147        0.17
+  velocity               200       0.0001        0.0211        0.24
+  redistribute           101       0.0052        0.5254        6.02
+    atomHalo             101       0.0036        0.3670        4.21
+  force                  101       0.0803        8.1139       92.98
+commHalo                 303       0.0009        0.2820        3.23
+commReduce                39       0.0042        0.1632        1.87
+
+Timing Statistics Across 4096 Ranks:
+        Timer        Rank: Min(s)       Rank: Max(s)      Avg(s)    Stdev(s)
+_____________________________________________________________________________
+total             2047:    8.8455    2624:   12.1124     11.2929      1.4121
+loop              4033:    8.7263    1162:    8.7310      8.7267      0.0003
+timestep          4033:    8.7186    1160:    8.7234      8.7194      0.0007
+  position        1509:    0.0140     858:    0.0151      0.0145      0.0002
+  velocity         431:    0.0200    2882:    0.0223      0.0211      0.0004
+  redistribute    3660:    0.4257    3442:    0.6059      0.5320      0.0329
+    atomHalo      3660:    0.2628    3474:    0.4443      0.3721      0.0327
+  force           3443:    8.1094    1156:    8.2295      8.1315      0.0340
+commHalo          3660:    0.1783    3442:    0.3590      0.2873      0.0326
+commReduce        2804:    0.0774     937:    0.1744      0.1365      0.0187
+
+---------------------------------------------------
+ Average atom update rate:      21.80 us/atom/task
+---------------------------------------------------
+
+
+---------------------------------------------------
+ Average all atom update rate:   0.01 us/atom
+---------------------------------------------------
+
+
+---------------------------------------------------
+ Average atom rate:            187.90 atoms/us
+---------------------------------------------------
+
+Sun Apr 19 09:16:19 2015: CoMD Ending
+
+Application 24039302 resources: utime ~42200s, stime ~14183s, Rss ~23200, inblocks ~2838388, outblocks ~4839517
+Sun Apr 19 09:16:30 2015: Starting Initialization
+
+
+Mini-Application Name    : CoMD-mpi
+Mini-Application Version : 1.1
+Platform:
+  hostname: nid27560
+  kernel name: 'Linux'
+  kernel release: '3.0.101-0.31.1_1.0502.8394-cray_gem_s'
+  processor: 'x86_64'
+Build:
+  CC: '/opt/cray/craype/2.2.1/bin/cc'
+  compiler version: 'Cray C : Version 8.3.3  Mon Apr 13, 2015  16:17:55'
+  CFLAGS: ' -DDOUBLE -DDO_MPI -g -O3   '
+  LDFLAGS: ' -lm '
+  using MPI: true
+  Threading: none
+  Double Precision: true
+Run Date/Time: 2015-04-19, 09:16:30
+
+Command Line Parameters:
+  doeam: 0
+  potDir: pots
+  potName: Cu_u6.eam
+  potType: funcfl
+  nx: 160
+  ny: 160
+  nz: 160
+  xproc: 4
+  yproc: 4
+  zproc: 4
+  Lattice constant: -1 Angstroms
+  nSteps: 100
+  printRate: 10
+  Time step: 1 fs
+  Initial Temperature: 3000 K
+  Initial Delta: 0 Angstroms
+
+Simulation data: 
+  Total atoms        : 16384000
+  Min global bounds  : [   0.0000000000,   0.0000000000,   0.0000000000 ]
+  Max global bounds  : [ 578.4000000000, 578.4000000000, 578.4000000000 ]
+
+Decomposition data: 
+  Processors         :      4,     4,     4
+  Local boxes        :     24,    24,    24 =    13824
+  Box size           : [   6.0250000000,   6.0250000000,   6.0250000000 ]
+  Box factor         : [   1.0410367171,   1.0410367171,   1.0410367171 ] 
+  Max Link Cell Occupancy: 32 of 64
+
+Potential data: 
+  Potential type   : Lennard-Jones
+  Species name     : Cu
+  Atomic number    : 29
+  Mass             : 63.55 amu
+  Lattice Type     : FCC
+  Lattice spacing  : 3.615 Angstroms
+  Cutoff           : 5.7875 Angstroms
+  Epsilon          : 0.167 eV
+  Sigma            : 2.315 Angstroms
+
+Memory data: 
+  Intrinsic atom footprint =   88 B/atom 
+  Total atom footprint     = 1375.000 MB ( 21.48 MB/node)
+  Link cell atom footprint =  74.250 MB/node
+  Link cell atom footprint =  94.402 MB/node (including halo cell data
+
+
+Initial energy : -0.855839337093, atom count : 16384000 
+
+Sun Apr 19 09:16:35 2015: Initialization Finished
+
+Sun Apr 19 09:16:35 2015: Starting simulation
+
+#                                                                                         Performance
+#  Loop   Time(fs)       Total Energy   Potential Energy     Kinetic Energy  Temperature   (us/atom)     # Atoms
+      0       0.00    -0.855839337093    -1.243619295093     0.387779958000    3000.0000     0.0000     16384000
+     10      10.00    -0.855848065986    -1.188372896273     0.332524830287    2572.5272    19.1873     16384000
+     20      20.00    -0.855738297845    -1.045031603274     0.189293305429    1464.4385    18.9257     16384000
+     30      30.00    -0.855724115063    -0.975789800419     0.120065685356     928.8697    18.8473     16384000
+     40      40.00    -0.855804961888    -1.010564797365     0.154759835477    1197.2757    18.8269     16384000
+     50      50.00    -0.855800803271    -1.033068963026     0.177268159755    1371.4079    18.8189     16384000
+     60      60.00    -0.855781995777    -1.031566533373     0.175784537596    1359.9300    18.8142     16384000
+     70      70.00    -0.855778669161    -1.032229372949     0.176450703788    1365.0837    18.8129     16384000
+     80      80.00    -0.855783418994    -1.042259809053     0.186476390059    1442.6459    18.8105     16384000
+     90      90.00    -0.855786570096    -1.054028922452     0.198242352356    1533.6715    18.8120     16384000
+    100     100.00    -0.855786384189    -1.060697706703     0.204911322514    1585.2649    18.8130     16384000
+Sun Apr 19 09:24:38 2015: Ending simulation
+
+
+
+Simulation Validation:
+  Initial energy  : -0.855839337093
+  Final energy    : -0.855786384189
+  eFinal/eInitial : 0.999938
+  Final atom count : 16384000, no atoms lost
+
+
+Timings for Rank 0
+        Timer        # Calls    Avg/Call (s)   Total (s)    % Loop
+___________________________________________________________________
+total                      1     488.4366      488.4366      101.13
+loop                       1     482.9928      482.9928      100.00
+timestep                  10      48.2991      482.9913      100.00
+  position               100       0.0207        2.0722        0.43
+  velocity               200       0.0170        3.3962        0.70
+  redistribute           101       0.1019       10.2886        2.13
+    atomHalo             101       0.0293        2.9628        0.61
+  force                  101       4.6729      471.9588       97.72
+commHalo                 303       0.0045        1.3576        0.28
+commReduce                39       0.0019        0.0730        0.02
+
+Timing Statistics Across 64 Ranks:
+        Timer        Rank: Min(s)       Rank: Max(s)      Avg(s)    Stdev(s)
+_____________________________________________________________________________
+total               15:  488.4364      16:  488.4367    488.4365      0.0001
+loop                 0:  482.9928      24:  482.9931    482.9930      0.0001
+timestep             0:  482.9913      27:  482.9921    482.9920      0.0001
+  position          41:    1.8067      20:    2.1578      1.9824      0.0912
+  velocity           8:    2.8233      18:    3.6639      3.4299      0.2563
+  redistribute      18:    9.7565       8:   11.3081     10.2371      0.4461
+    atomHalo        18:    2.4547       8:    3.9244      2.9188      0.4099
+  force              8:  471.3893      18:  472.3656    472.0742      0.3037
+commHalo            18:    0.7945       8:    2.3477      1.3139      0.4171
+commReduce          18:    0.0161      40:    0.1847      0.0704      0.0432
+
+---------------------------------------------------
+ Average atom update rate:      18.87 us/atom/task
+---------------------------------------------------
+
+
+---------------------------------------------------
+ Average all atom update rate:   0.29 us/atom
+---------------------------------------------------
+
+
+---------------------------------------------------
+ Average atom rate:              3.39 atoms/us
+---------------------------------------------------
+
+Sun Apr 19 09:24:38 2015: CoMD Ending
+
+Application 24039309 resources: utime ~31090s, stime ~274s, Rss ~111496, inblocks ~45213, outblocks ~75701
+Sun Apr 19 09:24:49 2015: Starting Initialization
+
+
+Mini-Application Name    : CoMD-mpi
+Mini-Application Version : 1.1
+Platform:
+  hostname: nid27560
+  kernel name: 'Linux'
+  kernel release: '3.0.101-0.31.1_1.0502.8394-cray_gem_s'
+  processor: 'x86_64'
+Build:
+  CC: '/opt/cray/craype/2.2.1/bin/cc'
+  compiler version: 'Cray C : Version 8.3.3  Mon Apr 13, 2015  16:17:55'
+  CFLAGS: ' -DDOUBLE -DDO_MPI -g -O3   '
+  LDFLAGS: ' -lm '
+  using MPI: true
+  Threading: none
+  Double Precision: true
+Run Date/Time: 2015-04-19, 09:24:49
+
+Command Line Parameters:
+  doeam: 0
+  potDir: pots
+  potName: Cu_u6.eam
+  potType: funcfl
+  nx: 160
+  ny: 160
+  nz: 160
+  xproc: 8
+  yproc: 8
+  zproc: 8
+  Lattice constant: -1 Angstroms
+  nSteps: 100
+  printRate: 10
+  Time step: 1 fs
+  Initial Temperature: 3000 K
+  Initial Delta: 0 Angstroms
+
+Simulation data: 
+  Total atoms        : 16384000
+  Min global bounds  : [   0.0000000000,   0.0000000000,   0.0000000000 ]
+  Max global bounds  : [ 578.4000000000, 578.4000000000, 578.4000000000 ]
+
+Decomposition data: 
+  Processors         :      8,     8,     8
+  Local boxes        :     12,    12,    12 =     1728
+  Box size           : [   6.0250000000,   6.0250000000,   6.0250000000 ]
+  Box factor         : [   1.0410367171,   1.0410367171,   1.0410367171 ] 
+  Max Link Cell Occupancy: 32 of 64
+
+Potential data: 
+  Potential type   : Lennard-Jones
+  Species name     : Cu
+  Atomic number    : 29
+  Mass             : 63.55 amu
+  Lattice Type     : FCC
+  Lattice spacing  : 3.615 Angstroms
+  Cutoff           : 5.7875 Angstroms
+  Epsilon          : 0.167 eV
+  Sigma            : 2.315 Angstroms
+
+Memory data: 
+  Intrinsic atom footprint =   88 B/atom 
+  Total atom footprint     = 1375.000 MB (  2.69 MB/node)
+  Link cell atom footprint =   9.281 MB/node
+  Link cell atom footprint =  14.738 MB/node (including halo cell data
+
+
+Initial energy : -0.855839337058, atom count : 16384000 
+
+Sun Apr 19 09:24:50 2015: Initialization Finished
+
+Sun Apr 19 09:24:50 2015: Starting simulation
+
+#                                                                                         Performance
+#  Loop   Time(fs)       Total Energy   Potential Energy     Kinetic Energy  Temperature   (us/atom)     # Atoms
+      0       0.00    -0.855839337058    -1.243619295058     0.387779958000    3000.0000     0.0000     16384000
+     10      10.00    -0.855848065986    -1.188372896273     0.332524830287    2572.5272    19.9773     16384000
+     20      20.00    -0.855738297845    -1.045031603274     0.189293305429    1464.4385    19.7020     16384000
+     30      30.00    -0.855724115063    -0.975789800419     0.120065685356     928.8697    19.6199     16384000
+     40      40.00    -0.855804961888    -1.010564797365     0.154759835477    1197.2757    19.6112     16384000
+     50      50.00    -0.855800803271    -1.033068963026     0.177268159755    1371.4079    19.5966     16384000
+     60      60.00    -0.855781995777    -1.031566533373     0.175784537596    1359.9300    19.6011     16384000
+     70      70.00    -0.855778669161    -1.032229372949     0.176450703788    1365.0837    19.6025     16384000
+     80      80.00    -0.855783418994    -1.042259809053     0.186476390059    1442.6459    19.6007     16384000
+     90      90.00    -0.855786570096    -1.054028922452     0.198242352356    1533.6715    19.5918     16384000
+    100     100.00    -0.855786384189    -1.060697706703     0.204911322514    1585.2649    19.5944     16384000
+Sun Apr 19 09:25:53 2015: Ending simulation
+
+
+
+Simulation Validation:
+  Initial energy  : -0.855839337058
+  Final energy    : -0.855786384189
+  eFinal/eInitial : 0.999938
+  Final atom count : 16384000, no atoms lost
+
+
+Timings for Rank 0
+        Timer        # Calls    Avg/Call (s)   Total (s)    % Loop
+___________________________________________________________________
+total                      1      63.6019       63.6019      101.15
+loop                       1      62.8801       62.8801      100.00
+timestep                  10       6.2879       62.8791      100.00
+  position               100       0.0025        0.2473        0.39
+  velocity               200       0.0018        0.3575        0.57
+  redistribute           101       0.0196        1.9802        3.15
+    atomHalo             101       0.0090        0.9047        1.44
+  force                  101       0.6028       60.8811       96.82
+commHalo                 303       0.0018        0.5482        0.87
+commReduce                39       0.0012        0.0460        0.07
+
+Timing Statistics Across 512 Ranks:
+        Timer        Rank: Min(s)       Rank: Max(s)      Avg(s)    Stdev(s)
+_____________________________________________________________________________
+total              431:   63.5993       0:   63.6019     63.6004      0.0007
+loop                81:   62.8800     500:   62.8807     62.8801      0.0001
+timestep             0:   62.8791     502:   62.8802     62.8796      0.0001
+  position          89:    0.2117     340:    0.2570      0.2327      0.0096
+  velocity         504:    0.3297     337:    0.4256      0.3929      0.0215
+  redistribute     337:    1.8278     296:    2.0379      1.9067      0.0483
+    atomHalo       337:    0.7588     456:    0.9631      0.8329      0.0454
+  force             68:   60.8507     337:   61.0088     60.9453      0.0407
+commHalo           337:    0.3992     456:    0.6162      0.4806      0.0437
+commReduce         375:    0.0200      12:    0.0600      0.0367      0.0073
+
+---------------------------------------------------
+ Average atom update rate:      19.65 us/atom/task
+---------------------------------------------------
+
+
+---------------------------------------------------
+ Average all atom update rate:   0.04 us/atom
+---------------------------------------------------
+
+
+---------------------------------------------------
+ Average atom rate:             26.06 atoms/us
+---------------------------------------------------
+
+Sun Apr 19 09:25:53 2015: CoMD Ending
+
+Application 24039318 resources: utime ~32752s, stime ~2128s, Rss ~29208, inblocks ~383337, outblocks ~604951
+Sun Apr 19 09:26:08 2015: Starting Initialization
+
+
+Mini-Application Name    : CoMD-mpi
+Mini-Application Version : 1.1
+Platform:
+  hostname: nid27560
+  kernel name: 'Linux'
+  kernel release: '3.0.101-0.31.1_1.0502.8394-cray_gem_s'
+  processor: 'x86_64'
+Build:
+  CC: '/opt/cray/craype/2.2.1/bin/cc'
+  compiler version: 'Cray C : Version 8.3.3  Mon Apr 13, 2015  16:17:55'
+  CFLAGS: ' -DDOUBLE -DDO_MPI -g -O3   '
+  LDFLAGS: ' -lm '
+  using MPI: true
+  Threading: none
+  Double Precision: true
+Run Date/Time: 2015-04-19, 09:26:08
+
+Command Line Parameters:
+  doeam: 0
+  potDir: pots
+  potName: Cu_u6.eam
+  potType: funcfl
+  nx: 160
+  ny: 160
+  nz: 160
+  xproc: 16
+  yproc: 16
+  zproc: 16
+  Lattice constant: -1 Angstroms
+  nSteps: 100
+  printRate: 10
+  Time step: 1 fs
+  Initial Temperature: 3000 K
+  Initial Delta: 0 Angstroms
+
+Simulation data: 
+  Total atoms        : 16384000
+  Min global bounds  : [   0.0000000000,   0.0000000000,   0.0000000000 ]
+  Max global bounds  : [ 578.4000000000, 578.4000000000, 578.4000000000 ]
+
+Decomposition data: 
+  Processors         :     16,    16,    16
+  Local boxes        :      6,     6,     6 =      216
+  Box size           : [   6.0250000000,   6.0250000000,   6.0250000000 ]
+  Box factor         : [   1.0410367171,   1.0410367171,   1.0410367171 ] 
+  Max Link Cell Occupancy: 32 of 64
+
+Potential data: 
+  Potential type   : Lennard-Jones
+  Species name     : Cu
+  Atomic number    : 29
+  Mass             : 63.55 amu
+  Lattice Type     : FCC
+  Lattice spacing  : 3.615 Angstroms
+  Cutoff           : 5.7875 Angstroms
+  Epsilon          : 0.167 eV
+  Sigma            : 2.315 Angstroms
+
+Memory data: 
+  Intrinsic atom footprint =   88 B/atom 
+  Total atom footprint     = 1375.000 MB (  0.34 MB/node)
+  Link cell atom footprint =   1.160 MB/node
+  Link cell atom footprint =   2.750 MB/node (including halo cell data
+
+
+Initial energy : -0.855839337078, atom count : 16384000 
+
+Sun Apr 19 09:26:08 2015: Initialization Finished
+
+Sun Apr 19 09:26:08 2015: Starting simulation
+
+#                                                                                         Performance
+#  Loop   Time(fs)       Total Energy   Potential Energy     Kinetic Energy  Temperature   (us/atom)     # Atoms
+      0       0.00    -0.855839337078    -1.243619295078     0.387779958000    3000.0000     0.0000     16384000
+     10      10.00    -0.855848065986    -1.188372896273     0.332524830287    2572.5272    21.7029     16384000
+     20      20.00    -0.855738297845    -1.045031603274     0.189293305429    1464.4385    21.5178     16384000
+     30      30.00    -0.855724115063    -0.975789800419     0.120065685356     928.8697    21.5739     16384000
+     40      40.00    -0.855804961888    -1.010564797365     0.154759835477    1197.2757    21.3021     16384000
+     50      50.00    -0.855800803271    -1.033068963026     0.177268159755    1371.4079    21.3835     16384000
+     60      60.00    -0.855781995777    -1.031566533373     0.175784537596    1359.9300    21.3764     16384000
+     70      70.00    -0.855778669161    -1.032229372949     0.176450703788    1365.0837    21.4597     16384000
+     80      80.00    -0.855783418994    -1.042259809053     0.186476390059    1442.6459    21.4267     16384000
+     90      90.00    -0.855786570096    -1.054028922452     0.198242352356    1533.6715    21.5346     16384000
+    100     100.00    -0.855786384189    -1.060697706703     0.204911322514    1585.2649    21.4480     16384000
+Sun Apr 19 09:26:16 2015: Ending simulation
+
+
+
+Simulation Validation:
+  Initial energy  : -0.855839337078
+  Final energy    : -0.855786384189
+  eFinal/eInitial : 0.999938
+  Final atom count : 16384000, no atoms lost
+
+
+Timings for Rank 0
+        Timer        # Calls    Avg/Call (s)   Total (s)    % Loop
+___________________________________________________________________
+total                      1      12.3033       12.3033      143.11
+loop                       1       8.5973        8.5973      100.00
+timestep                  10       0.8589        8.5890       99.90
+  position               100       0.0001        0.0147        0.17
+  velocity               200       0.0001        0.0210        0.24
+  redistribute           101       0.0052        0.5224        6.08
+    atomHalo             101       0.0036        0.3610        4.20
+  force                  101       0.0797        8.0491       93.62
+commHalo                 303       0.0009        0.2752        3.20
+commReduce                39       0.0026        0.1001        1.16
+
+Timing Statistics Across 4096 Ranks:
+        Timer        Rank: Min(s)       Rank: Max(s)      Avg(s)    Stdev(s)
+_____________________________________________________________________________
+total             2639:    8.7102       0:   12.3033     11.6895      1.0255
+loop              1153:    8.5930     572:    8.5974      8.5973      0.0004
+timestep          2625:    8.5833     146:    8.5901      8.5874      0.0008
+  position         461:    0.0140    1984:    0.0151      0.0145      0.0002
+  velocity         569:    0.0198    1984:    0.0224      0.0211      0.0005
+  redistribute    1436:    0.4218    1381:    0.5495      0.5150      0.0297
+    atomHalo      1436:    0.2594    3829:    0.3856      0.3525      0.0298
+  force            253:    8.0380     764:    8.1619      8.0647      0.0335
+commHalo          2412:    0.1740    3829:    0.2990      0.2666      0.0297
+commReduce        3460:    0.0711    1199:    0.1120      0.0945      0.0082
+
+---------------------------------------------------
+ Average atom update rate:      21.47 us/atom/task
+---------------------------------------------------
+
+
+---------------------------------------------------
+ Average all atom update rate:   0.01 us/atom
+---------------------------------------------------
+
+
+---------------------------------------------------
+ Average atom rate:            190.79 atoms/us
+---------------------------------------------------
+
+Sun Apr 19 09:26:16 2015: CoMD Ending
+
+Application 24039320 resources: utime ~42974s, stime ~14212s, Rss ~23136, inblocks ~2838468, outblocks ~4843581
