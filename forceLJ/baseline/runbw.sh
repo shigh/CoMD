@@ -11,7 +11,7 @@ cd $PBS_O_WORKDIR
 
 #for ((n=10; n<=100; n+=10))
 #do
-#    aprun -n 1 ../../../bin/CoMD-mpi \
+#    aprun -n 1 ../../bin/CoMD-mpi \
 #        --nx ${n} --ny ${n} --nz ${n} \
 #        --xproc 1 --yproc 1 --zproc 1 \
 #        --nSteps 20 --printRate 5 --dt 1 \
@@ -20,7 +20,7 @@ cd $PBS_O_WORKDIR
 
 for ((n=100; n<=500; n+=250))
 do
-    aprun -n 1 ../../../bin/CoMD-mpi \
+    aprun -n 1 ../../bin/CoMD-mpi \
         --nx ${n} --ny ${n} --nz ${n} \
         --xproc 1 --yproc 1 --zproc 1 \
         --nSteps 1 --printRate 5 --dt 1 \
