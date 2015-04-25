@@ -5,21 +5,21 @@ import re
 from glob import glob
 
 p_all_ranks_res = \
-r"""  Timer: (?P<function>.+)
-    MinRank: (?P<minrank>\d+)
-    MinTime:  (?P<mintime>.+)
-    MaxRank: (?P<maxrank>\d+)
-    MaxTime:  (?P<maxtime>.+)
-    AvgTime:  (?P<avgtime>.+)
-    StdevTime:   (?P<stddevtime>.+)
+r"""\s*Timer:(?P<function>.+)
+\s*MinRank:(?P<minrank>.+)
+\s*MinTime:(?P<mintime>.+)
+\s*MaxRank:(?P<maxrank>.+)
+\s*MaxTime:(?P<maxtime>.+)
+\s*AvgTime:(?P<avgtime>.+)
+\s*StdevTime:(?P<stddevtime>.+)
 """
 
 p_r0_res = \
-r"""Timer: (?P<function>.+)
-    CallCount:  (?P<callcount>\d+)
-    AvgPerCall: (?P<avgpercall>.+)
-    Total:      (?P<total>.+)
-    PercentLoop:(?P<percentloop>.+)
+r"""Timer:(?P<function>.+)
+\s*CallCount:(?P<callcount>.+)
+\s*AvgPerCall:(?P<avgpercall>.+)
+\s*Total:(?P<total>.+)
+\s*PercentLoop:(?P<percentloop>.+)
 """
 
 p_cmd = \
