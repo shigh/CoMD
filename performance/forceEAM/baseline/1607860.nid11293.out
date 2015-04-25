@@ -1,0 +1,12 @@
+----------------------------------------
+Begin Torque Prologue on nid27565
+at Sat Apr 25 10:51:52 CDT 2015
+Job Id:			1607860.nid11293
+Username:		tra761
+Group:			TRAIN_jt1
+Job name:		fEAM_nAtoms
+Requested resources:	neednodes=1:ppn=1:xe,nodes=1:ppn=1:xe,walltime=02:00:00
+Queue:			normal
+Account:		jt1
+End Torque Prologue:  0.024 elapsed
+----------------------------------------
