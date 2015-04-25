@@ -34,7 +34,7 @@ r"""Command Line Parameters:
   xproc: (?P<xproc>\d+)
   yproc: (?P<yproc>\d+)
   zproc: (?P<zproc>\d+)
-  Lattice constant: -1 Angstroms\s*
+  Lattice constant: (?P<latticeconstant>.+)Angstroms\s*
   nSteps: (?P<nsteps>\d+)
   printRate: (?P<printRate>\d+)
   Time step: (?P<timestep>\d+) fs\s*
