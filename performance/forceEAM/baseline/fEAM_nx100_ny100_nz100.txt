@@ -1,0 +1,38 @@
+Sat Apr 25 11:42:12 2015: Starting Initialization
+
+
+Mini-Application Name    : CoMD-mpi
+Mini-Application Version : 1.1
+Platform:
+  hostname: h2ologin2
+  kernel name: 'Linux'
+  kernel release: '3.0.101-0.46-default'
+  processor: 'x86_64'
+Build:
+  CC: '/opt/cray/craype/2.2.1/bin/cc'
+  compiler version: 'Cray C : Version 8.3.3  Sat Apr 18, 2015  19:08:31'
+  CFLAGS: ' -DDOUBLE -DDO_MPI -g -O3   '
+  LDFLAGS: ' -lm '
+  using MPI: true
+  Threading: none
+  Double Precision: true
+Run Date/Time: 2015-04-25, 11:42:12
+
+Command Line Parameters:
+  doeam: 1
+  potDir: ../../../pots
+  potName: Cu_u6.eam
+  potType: funcfl
+  nx: 100
+  ny: 100
+  nz: 100
+  xproc: 1
+  yproc: 1
+  zproc: 1
+  Lattice constant: 3.615 Angstroms
+  nSteps: 20
+  printRate: 5
+  Time step: 1 fs
+  Initial Temperature: 0 K
+  Initial Delta: 0 Angstroms
+
