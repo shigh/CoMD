@@ -171,7 +171,10 @@ int ljForce(SimFlat* s)
    Atoms* atoms = s->atoms;
    real3* f = s->atoms->f;
    real3*  r = s->atoms->r;
+   real_t*  r_iOff;
+   real_t*  f_iOff;
    real_t* U = s->atoms->U;
+   int* gid = s->atoms->gid;
 
    int nbrBoxes[27];
    // loop over local boxes
@@ -193,18 +196,21 @@ int ljForce(SimFlat* s)
          // loop over atoms in iBox
          for (int iOff=iBox*MAXATOMS,ii=0; ii<nIBox; ii++,iOff++)
          {
-			 int iId = atoms->gid[iOff];
+			 int iId = gid[iOff];
+			 r_iOff = r[iOff];
+			 f_iOff = f[iOff];
             // loop over atoms in jBox
             for (int jOff=MAXATOMS*jBox,ij=0; ij<nJBox; ij++,jOff++)
             {
                real_t dr[3];
-               int jId = atoms->gid[jOff];  
+               int jId = gid[jOff];  
                if (jBox < s->boxes->nLocalBoxes && jId <= iId )
                   continue; // don't double count local-local pairs.
                real_t r2 = 0.0;
+			   //r_jOff = &r[jOff];
                for (int m=0; m<3; m++)
                {
-                  dr[m] = r[iOff][m]-r[jOff][m];
+                  dr[m] = r_iOff[m]-r[jOff][m];
                   r2+=dr[m]*dr[m];
                }
 
@@ -230,7 +236,7 @@ int ljForce(SimFlat* s)
                real_t fr = - 4.0*epsilon*r6*r2*(12.0*r6 - 6.0);
                for (int m=0; m<3; m++)
                {
-                  f[iOff][m] -= dr[m]*fr;
+                  f_iOff[m] -= dr[m]*fr;
                   f[jOff][m] += dr[m]*fr;
                }
             } // loop over atoms in jBox
