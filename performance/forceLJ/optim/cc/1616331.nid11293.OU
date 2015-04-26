@@ -1,0 +1,12 @@
+----------------------------------------
+Begin Torque Prologue on nid27560
+at Sun Apr 26 11:29:28 CDT 2015
+Job Id:			1616331.nid11293
+Username:		tra761
+Group:			TRAIN_jt1
+Job name:		fLJ_cc_opt
+Requested resources:	neednodes=1:ppn=1:xe,nodes=1:ppn=1:xe,walltime=02:00:00
+Queue:			normal
+Account:		jt1
+End Torque Prologue:  0.045 elapsed
+----------------------------------------
