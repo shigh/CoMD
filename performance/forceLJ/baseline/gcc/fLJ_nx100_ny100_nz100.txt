@@ -1,7 +1,7 @@
-Sun Apr 26 12:14:08 2015: Starting Initialization
+Sun Apr 26 11:43:58 2015: Starting Initialization
 
 
-Mini-Application Name    : CoMD-serial-cc-opt
+Mini-Application Name    : CoMD-serial-gcc
 Mini-Application Version : 1.1
 Platform:
   hostname: h2ologin3
@@ -9,14 +9,14 @@ Platform:
   kernel release: '3.0.101-0.46-default'
   processor: 'x86_64'
 Build:
-  CC: '/opt/cray/craype/2.2.1/bin/cc'
-  compiler version: 'Cray C : Version 8.3.3  Sun Apr 26, 2015  11:17:17'
-  CFLAGS: ' -DDOUBLE -g -O3  '
+  CC: '/usr/bin/gcc'
+  compiler version: 'gcc (SUSE Linux) 4.3.4 [gcc-4_3-branch revision 152973]'
+  CFLAGS: ' -DDOUBLE -g -O5 -std=c99  '
   LDFLAGS: '-lm '
   using MPI: false
   Threading: none
   Double Precision: true
-Run Date/Time: 2015-04-26, 12:14:08
+Run Date/Time: 2015-04-26, 11:43:58
 
 Command Line Parameters:
   doeam: 0
@@ -68,18 +68,18 @@ Memory data:
 
 Initial energy : -1.243619295198, atom count : 4000000 
 
-Sun Apr 26 12:15:15 2015: Initialization Finished
+Sun Apr 26 11:44:22 2015: Initialization Finished
 
-Sun Apr 26 12:15:15 2015: Starting simulation
+Sun Apr 26 11:44:22 2015: Starting simulation
 
 #                                                                                         Performance
 #  Loop   Time(fs)       Total Energy   Potential Energy     Kinetic Energy  Temperature   (us/atom)     # Atoms
       0       0.00    -1.243619295198    -1.243619295198     0.000000000000       0.0000     0.0000      4000000
-      5       5.00    -1.243619295198    -1.243619295198     0.000000000000       0.0000    15.5296      4000000
-     10      10.00    -1.243619295198    -1.243619295198     0.000000000000       0.0000    15.5513      4000000
-     15      15.00    -1.243619295198    -1.243619295198     0.000000000000       0.0000    15.5592      4000000
-     20      20.00    -1.243619295198    -1.243619295198     0.000000000000       0.0000    15.5596      4000000
-Sun Apr 26 12:35:59 2015: Ending simulation
+      5       5.00    -1.243619295198    -1.243619295198     0.000000000000       0.0000     4.9556      4000000
+     10      10.00    -1.243619295198    -1.243619295198     0.000000000000       0.0000     4.9633      4000000
+     15      15.00    -1.243619295198    -1.243619295198     0.000000000000       0.0000     4.9640      4000000
+     20      20.00    -1.243619295198    -1.243619295198     0.000000000000       0.0000     4.9663      4000000
+Sun Apr 26 11:50:59 2015: Ending simulation
 
 
 
@@ -93,44 +93,44 @@ Simulation Validation:
 Timings for Rank 0
         Timer        # Calls    Avg/Call (s)   Total (s)    % Loop
 ___________________________________________________________________
-total                      1     1311.4380      1311.4380      105.42
-loop                       1     1244.0001      1244.0001      100.00
-timestep                   4     310.9988      1243.9953      100.00
-  position                20       0.2275        4.5509        0.37
-  velocity                40       0.1670        6.6818        0.54
-  redistribute            21       0.9937       20.8677        1.68
-    atomHalo              21       0.0814        1.7104        0.14
-  force                   21      60.5744      1272.0631      102.26
-commHalo                  63       0.0018        0.1142        0.01
+total                      1     420.8205      420.8205      106.00
+loop                       1     396.9867      396.9867      100.00
+timestep                   4      99.2458      396.9832      100.00
+  position                20       0.1031        2.0629        0.52
+  velocity                40       0.0921        3.6854        0.93
+  redistribute            21       0.7497       15.7442        3.97
+    atomHalo              21       0.0985        2.0687        0.52
+  force                   21      18.7976      394.7495       99.44
+commHalo                  63       0.0124        0.7823        0.20
 commReduce                18       0.0000        0.0000        0.00
 
 Timing Statistics Across 1 Ranks:
         Timer        Rank: Min(s)       Rank: Max(s)      Avg(s)    Stdev(s)
 _____________________________________________________________________________
-total                0: 1311.4380       0: 1311.4380   1311.4380      0.0000
-loop                 0: 1244.0001       0: 1244.0001   1244.0001      0.0000
-timestep             0: 1243.9953       0: 1243.9953   1243.9953      0.0000
-  position           0:    4.5509       0:    4.5509      4.5509      0.0000
-  velocity           0:    6.6818       0:    6.6818      6.6818      0.0000
-  redistribute       0:   20.8677       0:   20.8677     20.8677      0.0000
-    atomHalo         0:    1.7104       0:    1.7104      1.7104      0.0000
-  force              0: 1272.0631       0: 1272.0631   1272.0631      0.0000
-commHalo             0:    0.1142       0:    0.1142      0.1142      0.0000
+total                0:  420.8205       0:  420.8205    420.8205      0.0000
+loop                 0:  396.9867       0:  396.9867    396.9867      0.0000
+timestep             0:  396.9832       0:  396.9832    396.9832      0.0000
+  position           0:    2.0629       0:    2.0629      2.0629      0.0000
+  velocity           0:    3.6854       0:    3.6854      3.6854      0.0000
+  redistribute       0:   15.7442       0:   15.7442     15.7442      0.0000
+    atomHalo         0:    2.0687       0:    2.0687      2.0687      0.0000
+  force              0:  394.7495       0:  394.7495    394.7495      0.0000
+commHalo             0:    0.7823       0:    0.7823      0.7823      0.0000
 commReduce           0:    0.0000       0:    0.0000      0.0000      0.0000
 
 ---------------------------------------------------
- Average atom update rate:      15.55 us/atom/task
+ Average atom update rate:       4.96 us/atom/task
 ---------------------------------------------------
 
 
 ---------------------------------------------------
- Average all atom update rate:  15.55 us/atom
+ Average all atom update rate:   4.96 us/atom
 ---------------------------------------------------
 
 
 ---------------------------------------------------
- Average atom rate:              0.06 atoms/us
+ Average atom rate:              0.20 atoms/us
 ---------------------------------------------------
 
-Sun Apr 26 12:35:59 2015: CoMD Ending
+Sun Apr 26 11:50:59 2015: CoMD Ending
 
