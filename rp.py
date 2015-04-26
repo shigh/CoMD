@@ -25,9 +25,9 @@ r"""Timer:(?P<function>.+)
 p_cmd = \
 r"""Command Line Parameters:
   doeam: (?P<doeam>\d)
-  potDir: pots
-  potName: Cu_u6.eam
-  potType: funcfl
+  potDir:.+
+  potName:.+
+  potType:.+
   nx: (?P<nx>\d+)
   ny: (?P<ny>\d+)
   nz: (?P<nz>\d+)
