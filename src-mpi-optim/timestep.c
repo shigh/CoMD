@@ -30,8 +30,10 @@ static void advancePosition(SimFlat* s, int nBoxes, real_t dt);
 /// After nSteps the kinetic energy is computed for diagnostic output.
 double timestep(SimFlat* s, int nSteps, real_t dt)
 {
+	
    for (int ii=0; ii<nSteps; ++ii)
    {
+	   
       startTimer(velocityTimer);
       advanceVelocity(s, s->boxes->nLocalBoxes, 0.5*dt); 
       stopTimer(velocityTimer);

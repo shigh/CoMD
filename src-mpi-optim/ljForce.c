@@ -164,6 +164,18 @@ int ljForce(SimFlat* s)
    real_t rCut6 = s6 / (rCut2*rCut2*rCut2);
    real_t eShift = POT_SHIFT * rCut6 * (rCut6 - 1.0);
 
+   int max_count = -1;
+   int min_count = 999999999;
+   int count = 0;
+   const int count_id = 0;
+   Atoms* atoms = s->atoms;
+   real3* f = s->atoms->f;
+   real3*  r = s->atoms->r;
+   real_t*  r_iOff;
+   real_t*  f_iOff;
+   real_t* U = s->atoms->U;
+   int* gid = s->atoms->gid;
+
    int nbrBoxes[27];
    // loop over local boxes
    for (int iBox=0; iBox<s->boxes->nLocalBoxes; iBox++)
@@ -184,30 +196,34 @@ int ljForce(SimFlat* s)
          // loop over atoms in iBox
          for (int iOff=iBox*MAXATOMS,ii=0; ii<nIBox; ii++,iOff++)
          {
-            int iId = s->atoms->gid[iOff];
+			 int iId = gid[iOff];
+			 r_iOff = r[iOff];
+			 f_iOff = f[iOff];
             // loop over atoms in jBox
             for (int jOff=MAXATOMS*jBox,ij=0; ij<nJBox; ij++,jOff++)
             {
                real_t dr[3];
-               int jId = s->atoms->gid[jOff];  
+               int jId = gid[jOff];  
                if (jBox < s->boxes->nLocalBoxes && jId <= iId )
                   continue; // don't double count local-local pairs.
                real_t r2 = 0.0;
+			   //r_jOff = &r[jOff];
                for (int m=0; m<3; m++)
                {
-                  dr[m] = s->atoms->r[iOff][m]-s->atoms->r[jOff][m];
+                  dr[m] = r_iOff[m]-r[jOff][m];
                   r2+=dr[m]*dr[m];
                }
 
                if ( r2 > rCut2) continue;
 
+			   if((count_id==iId) || (count_id==jId)) count++;
                // Important note:
                // from this point on r actually refers to 1.0/r
                r2 = 1.0/r2;
                real_t r6 = s6 * (r2*r2*r2);
                real_t eLocal = r6 * (r6 - 1.0) - eShift;
-               s->atoms->U[iOff] += 0.5*eLocal;
-               s->atoms->U[jOff] += 0.5*eLocal;
+               U[iOff] += 0.5*eLocal;
+               U[jOff] += 0.5*eLocal;
 
                // calculate energy contribution based on whether
                // the neighbor box is local or remote
@@ -220,8 +236,8 @@ int ljForce(SimFlat* s)
                real_t fr = - 4.0*epsilon*r6*r2*(12.0*r6 - 6.0);
                for (int m=0; m<3; m++)
                {
-                  s->atoms->f[iOff][m] -= dr[m]*fr;
-                  s->atoms->f[jOff][m] += dr[m]*fr;
+                  f_iOff[m] -= dr[m]*fr;
+                  f[jOff][m] += dr[m]*fr;
                }
             } // loop over atoms in jBox
          } // loop over atoms in iBox

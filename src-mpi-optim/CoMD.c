@@ -112,6 +112,7 @@ int main(int argc, char** argv)
    profileStart(loopTimer);
    for (; iStep<nSteps;)
    {
+	   //printf("asdf\n");
       startTimer(commReduceTimer);
       sumAtoms(sim);
       stopTimer(commReduceTimer);
