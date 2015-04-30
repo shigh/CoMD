@@ -1,0 +1,186 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1.0in]{geometry}
+
+%\usepackage[utf8]{inputenc}
+%\usepackage[T1]{fontenc}
+%\usepackage{fixltx2e}
+%\usepackage{graphicx}
+%\usepackage{longtable}
+%\usepackage{float}
+%\usepackage{wrapfig}
+%\usepackage{rotating}
+%\usepackage[normalem]{ulem}
+%\usepackage{textcomp}
+%\usepackage{marvosym}
+%\usepackage{wasysym}
+%\tolerance=1000
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{bm}
+
+\usepackage{hyperref}
+
+\usepackage{listings}
+
+\newcommand{\pd}[2]{\frac{\partial #1}{ \partial #2}}
+\renewcommand{\v}[1]{\bold{#1}}
+
+\title{CS 598 Final Project}
+\author{Scott High and Erin Molloy}
+\date{\today}
+
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+Molecular dynamics (MD) simulations are important for researching physical phenomena 
+such as, the electronic structure of metal and the folding trajectories of proteins. 
+In our final project, we will create performance expectations for a molecular dynamics 
+simulation mini-app, called \href{https://github.com/exmatex/CoMD}{\texttt{CoMD}}, which is designed to expose the core features 
+of molecular dynamics simulations in a code base that is simple to understand and modify.
+
+% Outline contributions
+
+%In our final project, we will create performance expectations for the Lennart-Jones(LJ) model 
+%of potential energy. We propose to
+%\begin{itemize}
+%    \item [1] Create a performance expectation based on memory access patterns.
+%    \item [2] Create a performance expectation of scalability based on communication.
+%    \item [3] Attempt to improve performance and scalability.
+%    \item [4] Compare the scalability of the Lennart-Jones model to that of the Embedded Atom Model.
+%\end{itemize}
+
+\subsection{Background}
+Molecular dynamics simulations model the movement of individual particles over time. 
+Particle motion is determined by Newton's well-known equation of motion, $F = ma$. 
+In an $N$-particle simulation, the force on the particle at position 
+$\bm{r}_i = (x_i, y_i, z_i)$ is given by
+\begin{equation*}
+    F_i = m_i \ddot{\bm{r}}_i = -\frac{\partial}{\partial \bm{r}_i} U(\bm{r}_1, \dots, \bm{r}_N)
+\end{equation*}
+The system of first order ODEs is integrated to find the position of particles at each time step.
+Both the LJ and EAM models utilize inter-particle interactions or ``pair potentials''
+within a predefined region of interaction.
+
+
+% Compilation requires only a valid \texttt{C} compiler and a working \texttt{MPI} implementation.
+% The code is relatively short, only a few thousand lines, and is extensively documented. 
+
+% \subsection{Memory access}
+% Particles are stored in one-dimensional arrays and accessed via mapping functions
+% [\href{https://github.com/exmatex/CoMD/blob/master/src-mpi/linkCells.c}{\texttt{linkCells.c}}, 
+% $\sim$450 lines]. We will consider the two compute kernels 
+% for calculating inter-particle potentials
+% [\href{https://github.com/exmatex/CoMD/blob/master/src-mpi/ljForce.c}{\texttt{ljForce.c}},
+% $\sim$200 lines;
+% \href{https://github.com/exmatex/CoMD/blob/master/src-mpi/eam.c}{\texttt{eam.c}},
+% $\sim$800 lines].
+
+
+% \subsection{Communication}
+% Particles are decomposed into three-dimensional subdomains 
+% [\href{https://github.com/exmatex/CoMD/blob/master/src-mpi/decomposition.c}{\texttt{decomposition.c}},
+% $\sim$60 lines]. 
+% We will consider the data transferred between subdomains 
+% [\href{https://github.com/exmatex/CoMD/blob/master/src-mpi/haloExchange.c}{\texttt{haloExchange.c}},
+% $\sim$600 lines] and the specific calls to \texttt{MPI}
+% [\href{https://github.com/exmatex/CoMD/blob/master/src-mpi/parallel.c}{\texttt{parallel.c}},
+% $\sim$200 lines].
+
+\section{Performance Baseline}
+% Erin Molloy
+
+Detailed code timings are already built into \texttt{CoMD}. 
+
+
+
+%
+% 
+%
+%We will run performance
+%experiments with the provided model of copper atoms in a lattice.
+
+%
+% 
+%
+\subsection{Single processor}
+A performance baseline is obtained by running \texttt{CoMD} on a single processor.
+and the size of the lattice by a factor of 10 in each dimension.
+
+
+We will examine problem sizes larger than the size of the L2 cache (2MB - 
+\href{https://bluewaters.ncsa.illinois.edu/user-guide}{\texttt{Blue Waters User Guide}}).
+
+\subsection{Strong scaling}
+% add graphs
+
+\subsection{Weak scaling}
+%A performance baseline will be obtained  running \texttt{CoMD} on multiple processors in
+%both strong an weak scaling studies. The \texttt{CoMD} code repository includes information
+%and scripts for performing these: 
+%\url{http://exmatex.github.io/CoMD/doxygen-mpi/pg_running_comd.html}.
+%In selecting the problem sizes, we will need to consider the number of nodes 
+%each with 64GB of memory and two processors. 
+
+% The network topology of Blue Waters is a three-dimensional torus, so it is also theoretically possible to select 
+% an allocation such that subdomains communicate efficiently with neighbors 
+% (\href{https://bluewaters.ncsa.illinois.edu/topology-aware-scheduling}{Blue Waters Topology
+% Aware Scheduling}). In particular, we should try to insure that both the performance 
+% baseline and other experiments are allocated to sets of nodes with similar topologies.
+%two compute nodes on 
+%each gemini hub enabling neighbor-to-neighbor communication without network contention.
+
+
+\section{Performance model}
+All analysis is be done assuming a one-level cache model and approximating read and write times as equal. 
+The constants used in the performance expectations are determined by the clock rate and \texttt{STREAM}
+benchmark results as measured on Blue Waters. 
+
+The data structure used for storing the computational particles is a linear C array.
+A link cell is created to efficiently identify cells within the particle interaction distance 
+
+% include picture of particle lattice...
+
+% Graphs -- Erin
+
+
+\section{Modifications}
+% Scott
+
+% -- compiler choice
+% -- noticing that in either choice there is no vectorization
+% -- dereference pointers to arrays before 4 loops
+% -- still no vectorization, why?, why hard to fix?
+
+% -- linkcells, ordering is already optimal, notes on double counting instead of search
+
+
+\section{Conclusion}
+% REFERENCES???
+
+% Implementing a new data structure is beyond the scope of 
+% this project, but simple changes to improve access patterns, such as changing the order of particles 
+% [within linked cells] in the one-dimensional array, is feasible. We will also examine the loops in the compute 
+% kernel for potential modifications, such as, loop unrolling. Vectorization and pipelining could also be added.
+
+% \subsection{Communication}
+% We will use the scalability expectations to measure the effectiveness of distributed memory parallelism 
+% in the Lennart-Jones potential solver. Halos are exchanged using the function \texttt{sendReceiveParallel()}, which
+% executes a blocking send/receive operation via \texttt{MPI\_Sendrecv}. Potential modifications
+% include implementing non-blocking communication using \texttt{MPI\_Isend}, \texttt{MPI\_Irecv}, and
+% \texttt{MPI\_Waitall} (lecture 25 slide 32). This appears to be effective for messages sizes over 10 bytes. 
+% Thus, we will also need to examine the size of the halos.
+
+% \section{Comparing Results}
+% \label{sec-6}
+% The improved code will be run using the same model problem and problem
+% sizes as the baseline measurement. As mentioned above the \texttt{CoMD}
+% mini-app already has implemented detailed timing measurements. We do
+% not intend to change the overall structure of the code, so the built in measurements 
+% should be sufficient for these comparing run times.
+
+\end{document}
