@@ -32,3 +32,6 @@ TAGS
 
 # Emacs junk
 *~
+*.aux
+*.log
+*.pdf
