@@ -157,7 +157,7 @@ in a fully periodic domain. The total number of simulation particles
 is $N$, and each particle has $n$ neighbors within
 $r_c=r_{\text{cutoff}}$.
 
-We develope our performance model by calculate the cost of updating
+We develope our performance model by calculating the cost of updating
 particle $i$ and its interaction with each of its $n$ neighbors
 $j$. The cost is:
 \begin{itemize}
@@ -186,7 +186,12 @@ Approximating reads and writes as equal reduces this to
 \begin{equation}
   N \left(\frac{n}{2} \left(26 c + 3 r\right) + 3 r\right) + c + 4 r
 \end{equation}
-
+We approximate $n$ by noting that the density of atoms in an FCC
+lattice is 4 atoms/cell, so the average number of particles within in
+a sphere of radius $r_c$ is $n \approx 4\frac{4\pi}{3}r_c^3\approx69$.
+We approximate $c=4.35\times10^{-10}\;\text{flops}/s$ using the clock
+rate and $r=1.43\times10^{-9}\;\text{B}/s$ using the STREAM benchmark
+on Bluewaters.
 
 
 The data structure used for storing the computational particles is a linear C array.
