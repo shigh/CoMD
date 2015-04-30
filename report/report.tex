@@ -19,7 +19,7 @@
 \usepackage{amssymb}
 \usepackage{amsfonts}
 \usepackage{bm}
-
+\usepackage{algpseudocode}
 \usepackage{hyperref}
 
 \usepackage{listings}
@@ -136,9 +136,58 @@ We will examine problem sizes larger than the size of the L2 cache (2MB -
 
 
 \section{Performance model}
-All analysis is be done assuming a one-level cache model and approximating read and write times as equal. 
-The constants used in the performance expectations are determined by the clock rate and \texttt{STREAM}
-benchmark results as measured on Blue Waters. 
+All analysis is done assuming a one-level cache model and
+approximating read and write times as equal.  The constants used in
+the performance expectations are determined by the clock rate and
+\texttt{STREAM} benchmark results as measured on Blue Waters.
+
+The equations we are calculating for each particle in computer variables are
+\begin{align}
+  E_{tot} &= \sum_{ij} U_{LJ}(r_{ij}) \\
+  U_{LJ}(r_{ij}) &= 
+  A\left(\frac{1}{r_{ij}}\right)^{6}\left\{ \left(\frac{1}{r_{ij}}\right)^{6} - 1 \right\} \\
+  \notag\\
+  \textbf{F}(r_{ij}) &= - U'_{LJ}(r_{ij})\hat{r}_{ij} \notag\\
+      &=  24 \frac{\epsilon}{r_{ij}} \left\{ 2 \left(\frac{\sigma}{r_{ij}}\right)^{12}
+              - \left(\frac{\sigma}{r_{ij}}\right)^6 \right\} \hat{r}_{ij} \notag\\
+              &=  A \frac{1}{r_{ij}^2} \left(\frac{1}{r_{ij}}\right)^{6} \left\{ 2 \left(\frac{1}{r_{ij}}\right)^{6}
+              - 1 \right\} \textbf{r}_{ij}
+\end{align}
+in a fully periodic domain. The total number of simulation particles
+is $N$, and each particle has $n$ neighbors within
+$r_c=r_{\text{cutoff}}$.
+
+We develope our performance model by calculate the cost of updating
+particle $i$ and its interaction with each of its $n$ neighbors
+$j$. The cost is:
+\begin{itemize}
+\item[A)] 3 loads for particle $i$'s position
+\item[B)] For each particle $j$ where $r_{ij}<r_c$
+  \begin{enumerate}
+    \item $3$ loads for particle $j$'s position
+    \item 3 subtractions, 3 multiplications, 2 additions and 1 division to calculate $\frac{1}{r_{ij}^2}$ 
+    \item 3 multiplications to calculate $\left(\frac{1}{r_{ij}^2}\right)^3=\left(\frac{1}{r_{ij}}\right)^6$
+    \item 2 subtractions and 2 multiplications to calculate $U_{LJ}$ (1 subtraction is for cutoff potential)
+    \item 3 multiplications and 1 subtraction to calclulate $F(r_{ij})$
+    \item 3 multiplications and 3 additions to calculate and update $F_{x,y,z}$
+  \end{enumerate}
+\item[C)] 1 write to save $U_{LJ}$. (Assume we can save the $U_{LJ}(r_{ji})$ term for free)
+\item[D)] 3 writes to save $F_{x,y,z}$
+\item[E)] 1 addition to update $E$
+\end{itemize}
+The total cost is $N(A+nB/2)+C+D+E$, where the $1/2$ is to account for
+double counting. Using $c$ for the cost of a floating point operation,
+$w$ for the cost of a write and $r$ for the cost of a read the
+estimated cost is
+\begin{equation}
+N \left(\frac{n}{2} \left(26 c + 3 w\right) + 3 w\right) + c + 4 r
+\end{equation}
+Approximating reads and writes as equal reduces this to
+\begin{equation}
+  N \left(\frac{n}{2} \left(26 c + 3 r\right) + 3 r\right) + c + 4 r
+\end{equation}
+
+
 
 The data structure used for storing the computational particles is a linear C array.
 A link cell is created to efficiently identify cells within the particle interaction distance 
