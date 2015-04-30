@@ -1,0 +1,204 @@
+       /*  
+        *  Cray Inc. Decompilation
+        *  Notice - This output is provided for information only.
+        *  
+        *  Cray Inc. reserves the right to change the format of this
+        *  information at any time and does not guarantee the
+        *  readability or accuracy of this information.
+        *  
+        *  This information may not be compilable and corresponds to
+        *  the internal representation of the program during the
+        *  optimization phase of the compilation process.
+        *  
+        *  Source                :  ljForce.c
+        *  File                  :  /mnt/a/u/training/tra746/comd/src-mpi/ljForce.opt
+        *  Network               :  Gemini interconnect
+        *  Target                :  X86 :: interlagos, avx, xop, fma
+        */  
+   20. 
+   20. void
+   20. zeroReal3( a )
+   20. {
+   22.    a[0] = 0.0;
+   23.    a[1] = 0.0;
+   24.    a[2] = 0.0;
+   25.    return;
+   25. }
+   25. 
+   11. 
+   11. void*
+   11. comdMalloc( iSize )
+   11. {
+   13.    $Flat_P0 = malloc( iSize );
+   13.    @CFE_7_0 = $Flat_P0;
+   14.    return @CFE_7_0;
+   14. }
+   14. 
+   26. 
+   26. void
+   26. comdFree( ptr )
+   26. {
+   28.    free( ptr );
+   29.    return;
+   29. }
+   29. 
+   98. 
+   98. void
+   98. ljDestroy( inppot )
+   98. {
+  100.    if ( inppot != 0 ) {
+  101.       pot = (( struct LjPotentialSt )*)( inppot[0] );
+  102.       if ( pot != 0 ) {
+  103.          comdFree( (void*) pot );
+  104.          inppot[0] = (( struct BasePotentialSt )*) 0;
+  106.       }
+  106.    }
+  107.    return;
+  107. }
+  107. 
+  110. 
+  110. struct BasePotentialSt*
+  110. initLjPot( void )
+  110. {
+  112.    pot = (( struct LjPotentialSt )*)( comdMalloc( 80 ) );
+  113.    pot[0].force = ljForce;
+  114.    pot[0].print = ljPrint;
+  115.    pot[0].destroy = ljDestroy;
+  116.    pot[0].sigma = 2.3149999999999999;
+  117.    pot[0].epsilon = 1.6700000000000001e-1;
+  118.    pot[0].mass = 63.549999999999997 * 103.64269190268676;
+  120.    pot[0].lat = 3.6150000000000002;
+  121.    strcpy( &pot[0].latticeType[0], &@CFE_static_7_62[0] );
+  122.    pot[0].cutoff = 2.5 * pot[0].sigma;
+  124.    strcpy( &pot[0].name[0], &@CFE_static_7_63[0] );
+  125.    pot[0].atomicNo = 29;
+  127.    @CFE_7_6 = (( struct BasePotentialSt )*) pot;
+  128.    return @CFE_7_6;
+  128. }
+  128. 
+  130. 
+  130. void
+  130. ljPrint( file, pot )
+  130. {
+  132.    ljPot = (( struct LjPotentialSt )*) pot;
+  133.    fprintf( file, &@CFE_static_7_64[0] );
+  134.    fprintf( file, &@CFE_static_7_65[0], &ljPot[0].name[0] );
+  135.    fprintf( file, &@CFE_static_7_66[0], ljPot[0].atomicNo );
+  136.    fprintf( file, &@CFE_static_7_67[0], ljPot[0].mass / 103.64269190268676 );
+  137.    fprintf( file, &@CFE_static_7_68[0], &ljPot[0].latticeType[0] );
+  138.    fprintf( file, &@CFE_static_7_69[0], ljPot[0].lat );
+  139.    fprintf( file, &@CFE_static_7_70[0], ljPot[0].cutoff );
+  140.    fprintf( file, &@CFE_static_7_71[0], ljPot[0].epsilon );
+  141.    fprintf( file, &@CFE_static_7_72[0], ljPot[0].sigma );
+  142.    return;
+  142. }
+  142. 
+  144. 
+  144. int
+  144. ljForce( s )
+  144. {
+  146.    pot = (( struct LjPotentialSt )*)( s[0].pot );
+  147.    sigma = pot[0].sigma;
+  148.    epsilon = pot[0].epsilon;
+  149.    rCut = pot[0].cutoff;
+  150.    rCut2 = rCut * rCut;
+  153.    ePot = 0.0;
+  154.    s[0].ePotential = 0.0;
+  155.    fSize = 64 * s[0].boxes[0].nTotalBoxes;
+  156.    ii = 0;
+  156.    if ( ii < fSize ) {
+  156.       do {
+  158.          zeroReal3( &s[0].atoms[0].f[ii][0] );
+  159.          s[0].atoms[0].U[ii] = 0.0;
+  156.          ii++;
+  160.       } while ( ii < fSize );
+  156.    }
+  162.    s6 = sigma * sigma * sigma * sigma * sigma * sigma;
+  164.    rCut6 = s6 / ( rCut2 * rCut2 * rCut2 );
+  165.    eShift = rCut6 * ( -1.0 + rCut6 );
+  169.    iBox = 0;
+  169.    if ( iBox < s[0].boxes[0].nLocalBoxes ) {
+  169.       do {
+  171.          nIBox = s[0].boxes[0].nAtoms[iBox];
+  172.          if ( nIBox != 0 ) {
+  173.             nNbrBoxes = getNeighborBoxes( s[0].boxes, iBox, &nbrBoxes[0] );
+  175.             jTmp = 0;
+  175.             if ( jTmp < nNbrBoxes ) {
+  175.                do {
+  177.                   jBox = nbrBoxes[jTmp];
+  179.                   if ( jBox < 0 ) {
+  179.                      __assert_fail( &@CFE_static_7_73[0], &@CFE_static_7_74[0], 179, &@CFE_static_7_40[0] );
+  179.                   }
+  181.                   nJBox = s[0].boxes[0].nAtoms[jBox];
+  182.                   if ( nJBox != 0 ) {
+  185.                      iOff = 64 * iBox;
+  185.                      ii = 0;
+  185.                      if ( ii < nIBox ) {
+  185.                         do {
+  187.                            iId = s[0].atoms[0].gid[iOff];
+  189.                            jOff = 64 * jBox;
+  189.                            ij = 0;
+  189.                            if ( ij < nJBox ) {
+  189.                               do {
+  192.                                  jId = s[0].atoms[0].gid[jOff];
+  193.                                  if ( jBox >= s[0].boxes[0].nLocalBoxes ) {
+  193.                                     goto L10;
+  193.                                  }
+  193.                                  else if ( jId <= iId ) {
+  194.                                  }
+  194.                                  else {
+  194. L10:
+  195.                                     r2 = 0.0;
+  196.                                     m = 0;
+  196.                                     if ( m < 3 ) {
+  196.                                        do {
+  198.                                           dr[m] = s[0].atoms[0].r[iOff][m] - s[0].atoms[0].r[jOff][m];
+  199.                                           r2 += dr[m] * dr[m];
+  196.                                           m++;
+  200.                                        } while ( m < 3 );
+  196.                                     }
+  202.                                     if ( r2 <= rCut2 != 0 ) {
+  206.                                        r2 = 1.0 / r2;
+  207.                                        r6 = s6 * ( r2 * r2 * r2 );
+  208.                                        eLocal = r6 * ( -1.0 + r6 ) - eShift;
+  209.                                        s[0].atoms[0].U[iOff] += 5.0e-1 * eLocal;
+  210.                                        s[0].atoms[0].U[jOff] += 5.0e-1 * eLocal;
+  214.                                        if ( jBox < s[0].boxes[0].nLocalBoxes ) {
+  215.                                           ePot += eLocal;
+  214.                                        }
+  214.                                        else {
+  217.                                           ePot += 5.0e-1 * eLocal;
+  217.                                        }
+  220.                                        fr = -4.0 * epsilon * r6 * r2 * ( -6.0 + 12.0 * r6 );
+  221.                                        m = 0;
+  221.                                        if ( m < 3 ) {
+  221.                                           do {
+  223.                                              s[0].atoms[0].f[iOff][m] = s[0].atoms[0].f[iOff][m] - dr[m] * fr;
+  224.                                              s[0].atoms[0].f[jOff][m] += dr[m] * fr;
+  221.                                              m++;
+  225.                                           } while ( m < 3 );
+  221.                                        }
+  221.                                     }
+  221.                                  }
+  189.                                  ij++;
+  189.                                  jOff++;
+  226.                               } while ( ij < nJBox );
+  189.                            }
+  185.                            ii++;
+  185.                            iOff++;
+  227.                         } while ( ii < nIBox );
+  185.                      }
+  185.                   }
+  175.                   jTmp++;
+  228.                } while ( jTmp < nNbrBoxes );
+  175.             }
+  175.          }
+  169.          iBox++;
+  229.       } while ( iBox < s[0].boxes[0].nLocalBoxes );
+  169.    }
+  231.    ePot = 4.0 * ePot * epsilon;
+  232.    s[0].ePotential = ePot;
+  234.    @CFE_7_39 = 0;
+  235.    return @CFE_7_39;
+  235. }
+  235. 

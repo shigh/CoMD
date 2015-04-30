@@ -1,0 +1,205 @@
+       /*  
+        *  Cray Inc. Decompilation
+        *  Notice - This output is provided for information only.
+        *  
+        *  Cray Inc. reserves the right to change the format of this
+        *  information at any time and does not guarantee the
+        *  readability or accuracy of this information.
+        *  
+        *  This information may not be compilable and corresponds to
+        *  the internal representation of the program during the
+        *  optimization phase of the compilation process.
+        *  
+        *  Source                :  ljForce.c
+        *  File                  :  /mnt/a/u/training/tra746/comd/src-mpi/ljForce.cg
+        *  Network               :  Gemini interconnect
+        *  Target                :  X86 :: interlagos, avx, xop, fma
+        */  
+   20. 
+   20. void
+   20. zeroReal3( a )
+   20. {
+   22.    0[(long) a,0].L = 0.0;
+   23.    1[(long) a,0].L = 0.0;
+   24.    2[(long) a,0].L = 0.0;
+   25.    return;
+   25. }
+   25. 
+   11. 
+   11. void*
+   11. comdMalloc( iSize )
+   11. {
+   13.    $PMA_ret_P2 = posix_memalign( &$PMA_ptr_P1, 32, iSize );
+   13.    $Flat_P0 = ( ( $PMA_ret_P2 != 0 ) ? ( (void*) 0 ) : $PMA_ptr_P1 );
+   13.    @CFE_7_0 = $Flat_P0;
+   14.    return @CFE_7_0;
+   14. }
+   14. 
+   26. 
+   26. void
+   26. comdFree( ptr )
+   26. {
+   28.    free( ptr );
+   29.    return;
+   29. }
+   29. 
+   98. 
+   98. void
+   98. ljDestroy( inppot )
+   98. {
+  100.    if ( inppot != (( struct BasePotentialSt )**) 0 ) {
+  101.       pot = (( struct LjPotentialSt )*)( 0[(long) inppot,0].L );
+  102.       if ( pot != (( struct LjPotentialSt )*) 0 ) {
+  103.          comdFree( (void*) pot );
+  104.          0[(long) inppot,0].L = (( struct BasePotentialSt )*) 0;
+  106.       }
+  106.    }
+  107.    return;
+  107. }
+  107. 
+  110. 
+  110. struct BasePotentialSt*
+  110. initLjPot( void )
+  110. {
+  112.    pot = (( struct LjPotentialSt )*)( comdMalloc( 80 ) );
+  113.    5[(long) pot,0].L = (( function returning int )*) ljForce;
+  114.    6[(long) pot,0].L = (( function returning void )*) ljPrint;
+  115.    7[(long) pot,0].L = (( function returning void )*) ljDestroy;
+  116.    8[(long) pot,0].L = 2.3149999999999999;
+  117.    9[(long) pot,0].L = 1.6700000000000001e-1;
+  118.    1[(long) pot,0].L = 63.549999999999997 * 103.64269190268676;
+  120.    2[(long) pot,0].L = 3.6150000000000002;
+  121.    strcpy( &24[(long) pot].B, &@CFE_static_7_62[0].B );
+  122.    0[(long) pot,0].L = 2.5 * 8[(long) pot,0].L;
+  124.    strcpy( &32[(long) pot].B, &@CFE_static_7_63[0].B );
+  125.    9[(long) pot,0] = 29;
+  127.    @CFE_7_6 = (( struct BasePotentialSt )*) pot;
+  128.    return @CFE_7_6;
+  128. }
+  128. 
+  130. 
+  130. void
+  130. ljPrint( file, pot )
+  130. {
+  132.    ljPot = (( struct LjPotentialSt )*) pot;
+  133.    fprintf( file, &@CFE_static_7_64[0].B );
+  134.    fprintf( file, &@CFE_static_7_65[0].B, &32[(long) ljPot].B );
+  135.    fprintf( file, &@CFE_static_7_66[0].B, 9[(long) ljPot,0] );
+  136.    fprintf( file, &@CFE_static_7_67[0].B, 1[(long) ljPot,0].L / 103.64269190268676 );
+  137.    fprintf( file, &@CFE_static_7_68[0].B, &24[(long) ljPot].B );
+  138.    fprintf( file, &@CFE_static_7_69[0].B, 2[(long) ljPot,0].L );
+  139.    fprintf( file, &@CFE_static_7_70[0].B, 0[(long) ljPot,0].L );
+  140.    fprintf( file, &@CFE_static_7_71[0].B, 9[(long) ljPot,0].L );
+  141.    fprintf( file, &@CFE_static_7_72[0].B, 8[(long) ljPot,0].L );
+  142.    return;
+  142. }
+  142. 
+  144. 
+  144. int
+  144. ljForce( s )
+  144. {
+  146.    pot = (( struct LjPotentialSt )*)( 8[(long) s,0].L );
+  147.    sigma = 8[(long) pot,0].L;
+  148.    epsilon = 9[(long) pot,0].L;
+  149.    rCut = 0[(long) pot,0].L;
+  150.    rCut2 = rCut * rCut;
+  153.    ePot = 0.0;
+  154.    6[(long) s,0].L = 0.0;
+  155.    fSize = 64 * 5[(long)( 3[(long) s,0].L ),0];
+  156.    ii = 0;
+  156.    if ( ii < fSize ) {
+  156.       do {
+  158.          zeroReal3( &0[(long)( 5[(long)( 4[(long) s,0].L ),0].L ),3 * ii].L );
+  159.          0[(long)( 6[(long)( 4[(long) s,0].L ),0].L ),ii].L = 0.0;
+  156.          ii++;
+  160.       } while ( ii < fSize );
+  156.    }
+  162.    s6 = sigma * sigma * sigma * sigma * sigma * sigma;
+  164.    rCut6 = s6 / ( rCut2 * rCut2 * rCut2 );
+  165.    eShift = rCut6 * ( -1.0 + rCut6 );
+  169.    iBox = 0;
+  169.    if ( iBox < 3[(long)( 3[(long) s,0].L ),0] ) {
+  169.       do {
+  171.          nIBox = 0[(long)( 15[(long)( 3[(long) s,0].L ),0].L ),iBox];
+  172.          if ( nIBox != 0 ) {
+  173.             nNbrBoxes = getNeighborBoxes( 3[(long) s,0].L, iBox, &nbrBoxes[0] );
+  175.             jTmp = 0;
+  175.             if ( jTmp < nNbrBoxes ) {
+  175.                do {
+  177.                   jBox = nbrBoxes[jTmp];
+  179.                   if ( jBox < 0 ) {
+  179.                      __assert_fail( &@CFE_static_7_73[0].B, &@CFE_static_7_74[0].B, 179, &@CFE_static_7_40[0].B );
+  179.                   }
+  181.                   nJBox = 0[(long)( 15[(long)( 3[(long) s,0].L ),0].L ),jBox];
+  182.                   if ( nJBox != 0 ) {
+  185.                      iOff = 64 * iBox;
+  185.                      ii = 0;
+  185.                      if ( ii < nIBox ) {
+  185.                         do {
+  187.                            iId = 0[(long)( 1[(long)( 4[(long) s,0].L ),0].L ),iOff];
+  189.                            jOff = 64 * jBox;
+  189.                            ij = 0;
+  189.                            if ( ij < nJBox ) {
+  189.                               do {
+  192.                                  jId = 0[(long)( 1[(long)( 4[(long) s,0].L ),0].L ),jOff];
+  193.                                  if ( jBox >= 3[(long)( 3[(long) s,0].L ),0] ) {
+  193.                                     goto L10;
+  193.                                  }
+  193.                                  else if ( jId <= iId ) {
+  194.                                  }
+  194.                                  else {
+  194. L10:
+  195.                                     r2 = 0.0;
+  196.                                     m = 0;
+  196.                                     if ( m < 3 ) {
+  196.                                        do {
+  198.                                           dr[m].L = 0[(long)( 3[(long)( 4[(long) s,0].L ),0].L ),3 * iOff + m].L - 0[(long)( 3[(long)( 4[(long) s,0].L ),0].L ),3 * jOff + m].L;
+  199.                                           r2 += dr[m].L * dr[m].L;
+  196.                                           m++;
+  200.                                        } while ( m < 3 );
+  196.                                     }
+  202.                                     if ( r2 <= rCut2 != 0 ) {
+  206.                                        r2 = 1.0 / r2;
+  207.                                        r6 = s6 * ( r2 * r2 * r2 );
+  208.                                        eLocal = r6 * ( -1.0 + r6 ) - eShift;
+  209.                                        0[(long)( 6[(long)( 4[(long) s,0].L ),0].L ),iOff].L += 5.0e-1 * eLocal;
+  210.                                        0[(long)( 6[(long)( 4[(long) s,0].L ),0].L ),jOff].L += 5.0e-1 * eLocal;
+  214.                                        if ( jBox < 3[(long)( 3[(long) s,0].L ),0] ) {
+  215.                                           ePot += eLocal;
+  214.                                        }
+  214.                                        else {
+  217.                                           ePot += 5.0e-1 * eLocal;
+  217.                                        }
+  220.                                        fr = -4.0 * epsilon * r6 * r2 * ( -6.0 + 12.0 * r6 );
+  221.                                        m = 0;
+  221.                                        if ( m < 3 ) {
+  221.                                           do {
+  223.                                              0[(long)( 5[(long)( 4[(long) s,0].L ),0].L ),3 * iOff + m].L = 0[(long)( 5[(long)( 4[(long) s,0].L ),0].L ),3 * iOff + m].L - dr[m].L * fr;
+  224.                                              0[(long)( 5[(long)( 4[(long) s,0].L ),0].L ),3 * jOff + m].L += dr[m].L * fr;
+  221.                                              m++;
+  225.                                           } while ( m < 3 );
+  221.                                        }
+  221.                                     }
+  221.                                  }
+  189.                                  ij++;
+  189.                                  jOff++;
+  226.                               } while ( ij < nJBox );
+  189.                            }
+  185.                            ii++;
+  185.                            iOff++;
+  227.                         } while ( ii < nIBox );
+  185.                      }
+  185.                   }
+  175.                   jTmp++;
+  228.                } while ( jTmp < nNbrBoxes );
+  175.             }
+  175.          }
+  169.          iBox++;
+  229.       } while ( iBox < 3[(long)( 3[(long) s,0].L ),0] );
+  169.    }
+  231.    ePot = 4.0 * ePot * epsilon;
+  232.    6[(long) s,0].L = ePot;
+  234.    @CFE_7_39 = 0;
+  235.    return @CFE_7_39;
+  235. }
+  235. 

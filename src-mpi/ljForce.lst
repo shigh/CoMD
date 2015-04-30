@@ -1,0 +1,308 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S u m m a r y   R e p o r t
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Compilation
+-----------
+File     : /mnt/a/u/training/tra746/comd/src-mpi/ljForce.c
+Compiled : 2015-04-26  14:31:43
+Compiler : Version 8.3.3
+Ftnlx    : Version 8317 (libcif 83016)
+Target   : x86-64
+Command  : driver.cc -h cpu=interlagos -h static -D __CRAYXE
+           -D __CRAY_INTERLAGOS -D __CRAYXT_COMPUTE_LINUX_TARGET
+           -h network=gemini -D DOUBLE -g -O 2 -h list=m -h decomp -c ljForce.c
+           -o ljForce.o -W l,--rpath=/opt/cray/cce/8.3.3/craylibs/x86-64
+           -ibase-compiler /opt/cray/cce/8.3.3/CC/x86-64/compiler_include_base
+           -isystem /opt/cray/cce/8.3.3/craylibs/x86-64/include
+           -I /opt/gcc/4.8.1/snos/lib/gcc/x86_64-suse-linux/4.8.1/include
+           -I /opt/gcc/4.8.1/snos/lib/gcc/x86_64-suse-linux/4.8.1/include-fixed
+           -I /opt/cray/mpt/7.0.3/gni/mpich2-cray/83/include
+           -I /opt/cray/libsci/13.0.1/CRAY/83/interlagos/include
+           -I /opt/cray/rca/1.0.0-2.0502.53711.3.125.gem/include
+           -I /opt/cray/alps/5.2.1-2.0502.9041.11.6.gem/include
+           -I /opt/cray/xpmem/0.1-2.0502.55507.3.2.gem/include
+           -I /opt/cray/gni-headers/3.0-1.0502.9684.5.2.gem/include
+           -I /opt/cray/dmapp/7.0.1-1.0502.9501.5.211.gem/include
+           -I /opt/cray/pmi/5.0.5-1.0000.10300.134.8.gem/include
+           -I /opt/cray/ugni/5.0-1.0502.9685.4.24.gem/include
+           -I /opt/cray/udreg/2.3.2-1.0502.9275.1.25.gem/include
+           -I /opt/cray/cce/8.3.3/craylibs/x86-64/pkgconfig/../include
+           -I /opt/cray/cce/8.3.3/craylibs/x86-64/include
+           -I /opt/cray/wlm_detect/1.0-1.0502.53341.1.1.gem/include
+           -I /opt/cray/krca/1.0.0-2.0502.53880.4.103.gem/include
+           -I /opt/cray-hss-devel/7.2.0/include
+
+clx report
+------------
+Source   : /mnt/a/u/training/tra746/comd/src-mpi/ljForce.c
+Date     : 04/26/2015  14:31:43
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                          S o u r c e   L i s t i n g
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+     %%%    L o o p m a r k   L e g e n d    %%%
+
+     Primary Loop Type        Modifiers
+     ------- ---- ----        ---------
+     A - Pattern matched      a - atomic memory operation
+                              b - blocked
+     C - Collapsed            c - conditional and/or computed
+     D - Deleted               
+     E - Cloned                
+     F - Flat - No calls      f - fused
+     G - Accelerated          g - partitioned
+     I - Inlined              i - interchanged
+     M - Multithreaded        m - partitioned
+                              n - non-blocking remote transfer
+                              p - partial
+                              r - unrolled
+                              s - shortloop
+     V - Vectorized           w - unwound
+
+     + - More messages listed at end of listing
+     ------------------------------------------
+
+
+    1.                 /// \file
+    2.                 /// Computes forces for the 12-6 Lennard Jones (LJ) potential.
+    3.                 ///
+    4.                 /// The Lennard-Jones model is not a good representation for the
+    5.                 /// bonding in copper, its use has been limited to constant volume
+    6.                 /// simulations where the embedding energy contribution to the cohesive
+    7.                 /// energy is not included in the two-body potential
+    8.                 ///
+    9.                 /// The parameters here are taken from Wolf and Phillpot and fit to the
+   10.                 /// room temperature lattice constant and the bulk melt temperature
+   11.                 /// Ref: D. Wolf and S.Yip eds. Materials Interfaces (Chapman & Hall
+   12.                 ///      1992) Page 230.
+   13.                 ///
+   14.                 /// Notes on LJ:
+   15.                 ///
+   16.                 /// http://en.wikipedia.org/wiki/Lennard_Jones_potential
+   17.                 ///
+   18.                 /// The total inter-atomic potential energy in the LJ model is:
+   19.                 ///
+   20.                 /// \f[
+   21.                 ///   E_{tot} = \sum_{ij} U_{LJ}(r_{ij})
+   22.                 /// \f]
+   23.                 /// \f[
+   24.                 ///   U_{LJ}(r_{ij}) = 4 \epsilon
+   25.                 ///           \left\{ \left(\frac{\sigma}{r_{ij}}\right)^{12}
+   26.                 ///           - \left(\frac{\sigma}{r_{ij}}\right)^6 \right\}
+   27.                 /// \f]
+   28.                 ///
+   29.                 /// where \f$\epsilon\f$ and \f$\sigma\f$ are the material parameters in the potential.
+   30.                 ///    - \f$\epsilon\f$ = well depth
+   31.                 ///    - \f$\sigma\f$   = hard sphere diameter
+   32.                 ///
+   33.                 ///  To limit the interation range, the LJ potential is typically
+   34.                 ///  truncated to zero at some cutoff distance. A common choice for the
+   35.                 ///  cutoff distance is 2.5 * \f$\sigma\f$.
+   36.                 ///  This implementation can optionally shift the potential slightly
+   37.                 ///  upward so the value of the potential is zero at the cuotff
+   38.                 ///  distance.  This shift has no effect on the particle dynamics.
+   39.                 ///
+   40.                 ///
+   41.                 /// The force on atom i is given by
+   42.                 ///
+   43.                 /// \f[
+   44.                 ///   F_i = -\nabla_i \sum_{jk} U_{LJ}(r_{jk})
+   45.                 /// \f]
+   46.                 ///
+   47.                 /// where the subsrcipt i on the gradient operator indicates that the
+   48.                 /// derivatives are taken with respect to the coordinates of atom i.
+   49.                 /// Liberal use of the chain rule leads to the expression
+   50.                 ///
+   51.                 /// \f{eqnarray*}{
+   52.                 ///   F_i &=& - \sum_j U'_{LJ}(r_{ij})\hat{r}_{ij}\\
+   53.                 ///       &=& \sum_j 24 \frac{\epsilon}{r_{ij}} \left\{ 2 \left(\frac{\sigma}{r_{ij}}\right)^{12}
+   54.                 ///               - \left(\frac{\sigma}{r_{ij}}\right)^6 \right\} \hat{r}_{ij}
+   55.                 /// \f}
+   56.                 ///
+   57.                 /// where \f$\hat{r}_{ij}\f$ is a unit vector in the direction from atom
+   58.                 /// i to atom j.
+   59.                 /// 
+   60.                 ///
+   61.                 
+   62.                 #include "ljForce.h"
+   63.                 
+   64.                 #include <stdlib.h>
+   65.                 #include <assert.h>
+   66.                 #include <string.h>
+   67.                 
+   68.                 #include "constants.h"
+   69.                 #include "mytype.h"
+   70.                 #include "parallel.h"
+   71.                 #include "linkCells.h"
+   72.                 #include "memUtils.h"
+   73.                 #include "CoMDTypes.h"
+   74.                 
+   75.                 #define POT_SHIFT 1.0
+   76.                 
+   77.                 /// Derived struct for a Lennard Jones potential.
+   78.                 /// Polymorphic with BasePotential.
+   79.                 /// \see BasePotential
+   80.                 typedef struct LjPotentialSt
+   81.                 {
+   82.                    real_t cutoff;          //!< potential cutoff distance in Angstroms
+   83.                    real_t mass;            //!< mass of atoms in intenal units
+   84.                    real_t lat;             //!< lattice spacing (angs) of unit cell
+   85.                    char latticeType[8];    //!< lattice type, e.g. FCC, BCC, etc.
+   86.                    char  name[3];	   //!< element name
+   87.                    int	 atomicNo;	   //!< atomic number  
+   88.                    int  (*force)(SimFlat* s); //!< function pointer to force routine
+   89.                    void (*print)(FILE* file, BasePotential* pot);
+   90.                    void (*destroy)(BasePotential** pot); //!< destruction of the potential
+   91.                    real_t sigma;
+   92.                    real_t epsilon;
+   93.                 } LjPotential;
+   94.                 
+   95.                 static int ljForce(SimFlat* s);
+   96.                 static void ljPrint(FILE* file, BasePotential* pot);
+   97.                 
+   98.                 void ljDestroy(BasePotential** inppot)
+   99.                 {
+  100.                    if ( ! inppot ) return;
+  101.                    LjPotential* pot = (LjPotential*)(*inppot);
+  102.                    if ( ! pot ) return;
+  103.                    comdFree(pot);
+  104.                    *inppot = NULL;
+  105.                 
+  106.                    return;
+  107.                 }
+  108.                 
+  109.                 /// Initialize an Lennard Jones potential for Copper.
+  110.                 BasePotential* initLjPot(void)
+  111.                 {
+  112.                    LjPotential *pot = (LjPotential*)comdMalloc(sizeof(LjPotential));
+  113.                    pot->force = ljForce;
+  114.                    pot->print = ljPrint;
+  115.                    pot->destroy = ljDestroy;
+  116.                    pot->sigma = 2.315;	                  // Angstrom
+  117.                    pot->epsilon = 0.167;                  // eV
+  118.                    pot->mass = 63.55 * amuToInternalMass; // Atomic Mass Units (amu)
+  119.                 
+  120.                    pot->lat = 3.615;                      // Equilibrium lattice const in Angs
+  121.                    strcpy(pot->latticeType, "FCC");       // lattice type, i.e. FCC, BCC, etc.
+  122.                    pot->cutoff = 2.5*pot->sigma;          // Potential cutoff in Angs
+  123.                 
+  124.                    strcpy(pot->name, "Cu");
+  125.                    pot->atomicNo = 29;
+  126.                 
+  127.                    return (BasePotential*) pot;
+  128.                 }
+  129.                 
+  130.                 void ljPrint(FILE* file, BasePotential* pot)
+  131.                 {
+  132.                    LjPotential* ljPot = (LjPotential*) pot;
+  133.                    fprintf(file, "  Potential type   : Lennard-Jones\n");
+  134.                    fprintf(file, "  Species name     : %s\n", ljPot->name);
+  135.                    fprintf(file, "  Atomic number    : %d\n", ljPot->atomicNo);
+  136.                    fprintf(file, "  Mass             : "FMT1" amu\n", ljPot->mass / amuToInternalMass); // print in amu
+  137.                    fprintf(file, "  Lattice Type     : %s\n", ljPot->latticeType);
+  138.                    fprintf(file, "  Lattice spacing  : "FMT1" Angstroms\n", ljPot->lat);
+  139.                    fprintf(file, "  Cutoff           : "FMT1" Angstroms\n", ljPot->cutoff);
+  140.                    fprintf(file, "  Epsilon          : "FMT1" eV\n", ljPot->epsilon);
+  141.                    fprintf(file, "  Sigma            : "FMT1" Angstroms\n", ljPot->sigma);
+  142.                 }
+  143.                 
+  144.                 int ljForce(SimFlat* s)
+  145.                 {
+  146.                    LjPotential* pot = (LjPotential *) s->pot;
+  147.                    real_t sigma = pot->sigma;
+  148.                    real_t epsilon = pot->epsilon;
+  149.                    real_t rCut = pot->cutoff;
+  150.                    real_t rCut2 = rCut*rCut;
+  151.                 
+  152.                    // zero forces and energy
+  153.                    real_t ePot = 0.0;
+  154.                    s->ePotential = 0.0;
+  155.                    int fSize = s->boxes->nTotalBoxes*MAXATOMS;
+  156.  + 1----------<    for (int ii=0; ii<fSize; ++ii)
+  157.    1               {
+  158.    1                  zeroReal3(s->atoms->f[ii]);
+  159.    1                  s->atoms->U[ii] = 0.;
+  160.    1---------->    }
+  161.                    
+  162.                    real_t s6 = sigma*sigma*sigma*sigma*sigma*sigma;
+  163.                 
+  164.                    real_t rCut6 = s6 / (rCut2*rCut2*rCut2);
+  165.                    real_t eShift = POT_SHIFT * rCut6 * (rCut6 - 1.0);
+  166.                 
+  167.                    int nbrBoxes[27];
+  168.                    // loop over local boxes
+  169.  + 1----------<    for (int iBox=0; iBox<s->boxes->nLocalBoxes; iBox++)
+  170.    1               {
+  171.    1                  int nIBox = s->boxes->nAtoms[iBox];
+  172.    1                  if ( nIBox == 0 ) continue;
+  173.    1                  int nNbrBoxes = getNeighborBoxes(s->boxes, iBox, nbrBoxes);
+  174.    1                  // loop over neighbors of iBox
+  175.  + 1 2--------<       for (int jTmp=0; jTmp<nNbrBoxes; jTmp++)
+  176.    1 2                {
+  177.    1 2                   int jBox = nbrBoxes[jTmp];
+  178.    1 2                   
+  179.    1 2                   assert(jBox>=0);
+  180.    1 2                   
+  181.    1 2                   int nJBox = s->boxes->nAtoms[jBox];
+  182.    1 2                   if ( nJBox == 0 ) continue;
+  183.    1 2                   
+  184.    1 2                   // loop over atoms in iBox
+  185.  + 1 2 3------<          for (int iOff=iBox*MAXATOMS,ii=0; ii<nIBox; ii++,iOff++)
+  186.    1 2 3                 {
+  187.    1 2 3                    int iId = s->atoms->gid[iOff];
+  188.    1 2 3                    // loop over atoms in jBox
+  189.  + 1 2 3 4----<             for (int jOff=MAXATOMS*jBox,ij=0; ij<nJBox; ij++,jOff++)
+  190.    1 2 3 4                  {
+  191.    1 2 3 4                     real_t dr[3];
+  192.    1 2 3 4                     int jId = s->atoms->gid[jOff];  
+  193.    1 2 3 4                     if (jBox < s->boxes->nLocalBoxes && jId <= iId )
+  194.    1 2 3 4                        continue; // don't double count local-local pairs.
+  195.    1 2 3 4                     real_t r2 = 0.0;
+  196.  + 1 2 3 4 5--<                for (int m=0; m<3; m++)
+  197.    1 2 3 4 5                   {
+  198.    1 2 3 4 5                      dr[m] = s->atoms->r[iOff][m]-s->atoms->r[jOff][m];
+  199.    1 2 3 4 5                      r2+=dr[m]*dr[m];
+  200.    1 2 3 4 5-->                }
+  201.    1 2 3 4      
+  202.    1 2 3 4                     if ( r2 > rCut2) continue;
+  203.    1 2 3 4      
+  204.    1 2 3 4                     // Important note:
+  205.    1 2 3 4                     // from this point on r actually refers to 1.0/r
+  206.    1 2 3 4                     r2 = 1.0/r2;
+  207.    1 2 3 4                     real_t r6 = s6 * (r2*r2*r2);
+  208.    1 2 3 4                     real_t eLocal = r6 * (r6 - 1.0) - eShift;
+  209.    1 2 3 4                     s->atoms->U[iOff] += 0.5*eLocal;
+  210.    1 2 3 4                     s->atoms->U[jOff] += 0.5*eLocal;
+  211.    1 2 3 4      
+  212.    1 2 3 4                     // calculate energy contribution based on whether
+  213.    1 2 3 4                     // the neighbor box is local or remote
+  214.    1 2 3 4                     if (jBox < s->boxes->nLocalBoxes)
+  215.    1 2 3 4                        ePot += eLocal;
+  216.    1 2 3 4                     else
+  217.    1 2 3 4                        ePot += 0.5 * eLocal;
+  218.    1 2 3 4      
+  219.    1 2 3 4                     // different formulation to avoid sqrt computation
+  220.    1 2 3 4                     real_t fr = - 4.0*epsilon*r6*r2*(12.0*r6 - 6.0);
+  221.  + 1 2 3 4 5--<                for (int m=0; m<3; m++)
+  222.    1 2 3 4 5                   {
+  223.    1 2 3 4 5                      s->atoms->f[iOff][m] -= dr[m]*fr;
+  224.    1 2 3 4 5                      s->atoms->f[jOff][m] += dr[m]*fr;
+  225.    1 2 3 4 5-->                }
+  226.    1 2 3 4---->             } // loop over atoms in jBox
+  227.    1 2 3------>          } // loop over atoms in iBox
+  228.    1 2-------->       } // loop over neighbor boxes
+  229.    1---------->    } // loop over local boxes in system
+  230.                 
+  231.                    ePot = ePot*4.0*epsilon;
+  232.                    s->ePotential = ePot;
+  233.                 
+  234.                    return 0;
+  235.                 }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
