@@ -212,41 +212,12 @@ was clear that these dereferences were being done everytime the
 pointers were accessed in the innermost loop of the force
 calcuation. A simple optimzation was then to derefernce these pointers
 before the computation. The small loops over real3 variables are also
-not unrolled by compiler, so we did this by hand.
+not unrolled by compiler, so we did this by hand. The inner loop of
+the force calculation routine is shown before and after optimization
+in appendix \ref{apd:code-changes}.
 
 % Report and code before/after?
-% \begin{lstlisting}
-%   real_t dr[3];
-%   int jId = s->atoms->gid[jOff];  
-%   if (jBox < s->boxes->nLocalBoxes && jId <= iId )
-%   continue; // don't double count local-local pairs.
-%   real_t r2 = 0.0;
-%   for (int m=0; m<3; m++)
-%   {
-%     dr[m] = s->atoms->r[iOff][m]-s->atoms->r[jOff][m];
-%     r2+=dr[m]*dr[m];
-%   }
 
-%   if ( r2 > rCut2) continue;
-
-%   r2 = 1.0/r2;
-%   real_t r6 = s6 * (r2*r2*r2);
-%   real_t eLocal = r6 * (r6 - 1.0) - eShift;
-%   s->atoms->U[iOff] += 0.5*eLocal;
-%   s->atoms->U[jOff] += 0.5*eLocal;
-
-%   if (jBox < s->boxes->nLocalBoxes)
-%   ePot += eLocal;
-%   else
-%   ePot += 0.5 * eLocal;
-
-%   real_t fr = - 4.0*epsilon*r6*r2*(12.0*r6 - 6.0);
-%   for (int m=0; m<3; m++)
-%   {
-%     s->atoms->f[iOff][m] -= dr[m]*fr;
-%     s->atoms->f[jOff][m] += dr[m]*fr;
-%   }
-% \end{lstlisting}
 % -- compiler choice
 % -- noticing that in either choice there is no vectorization
 % -- dereference pointers to arrays before 4 loops
@@ -278,5 +249,82 @@ not unrolled by compiler, so we did this by hand.
 % mini-app already has implemented detailed timing measurements. We do
 % not intend to change the overall structure of the code, so the built in measurements 
 % should be sufficient for these comparing run times.
+
+
+\appendix
+\section{Code changes}
+\label{apd:code-changes}
+The changes made to the inner loop in the force cacluation are shown
+here.
+\subsection{Initial Inner Force Loop}
+\begin{lstlisting}
+  real_t dr[3];
+  int jId = s->atoms->gid[jOff];  
+  if (jBox < s->boxes->nLocalBoxes && jId <= iId )
+  continue; // don't double count local-local pairs.
+  real_t r2 = 0.0;
+  for (int m=0; m<3; m++)
+  {
+    dr[m] = s->atoms->r[iOff][m]-s->atoms->r[jOff][m];
+    r2+=dr[m]*dr[m];
+  }
+
+  if ( r2 > rCut2) continue;
+
+  r2 = 1.0/r2;
+  real_t r6 = s6 * (r2*r2*r2);
+  real_t eLocal = r6 * (r6 - 1.0) - eShift;
+  s->atoms->U[iOff] += 0.5*eLocal;
+  s->atoms->U[jOff] += 0.5*eLocal;
+
+  if (jBox < s->boxes->nLocalBoxes)
+  ePot += eLocal;
+  else
+  ePot += 0.5 * eLocal;
+
+  real_t fr = - 4.0*epsilon*r6*r2*(12.0*r6 - 6.0);
+  for (int m=0; m<3; m++)
+  {
+    s->atoms->f[iOff][m] -= dr[m]*fr;
+    s->atoms->f[jOff][m] += dr[m]*fr;
+  }
+\end{lstlisting}
+
+\subsection{Optimized Inner Force Loop}
+\begin{lstlisting}
+  real_t dr[3];
+  int jId = gid[jOff];  
+  if (jBox < nLocalBoxes && jId <= iId )
+  continue; // don't double count local-local pairs.
+
+  real_t r2 = 0.0;
+  dr[0] = r_iOff[0]-r[jOff][0];
+  r2+=dr[0]*dr[0];
+  dr[1] = r_iOff[1]-r[jOff][1];
+  r2+=dr[1]*dr[1];
+  dr[2] = r_iOff[2]-r[jOff][2];
+  r2+=dr[2]*dr[2];
+
+  if ( r2 > rCut2) continue;
+
+  r2 = 1.0/r2;
+  real_t r6 = s6 * (r2*r2*r2);
+  real_t eLocal = r6 * (r6 - 1.0) - eShift;
+  U[iOff] += 0.5*eLocal;
+  U[jOff] += 0.5*eLocal;
+
+  if (jBox < nLocalBoxes)
+  ePot += eLocal;
+  else
+  ePot += 0.5 * eLocal;
+
+  real_t fr = - 4.0*epsilon*r6*r2*(12.0*r6 - 6.0);
+  f_iOff[0] -= dr[0]*fr;
+  f[jOff][0] += dr[0]*fr;
+  f_iOff[1] -= dr[1]*fr;
+  f[jOff][1] += dr[1]*fr;
+  f_iOff[2] -= dr[2]*fr;
+  f[jOff][2] += dr[2]*fr;
+\end{lstlisting}
 
 \end{document}
