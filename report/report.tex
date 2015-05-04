@@ -178,12 +178,14 @@ model \ref{eqn:perf-model-nk} to give
 % Erin Molloy
 
 A baseline for the force routine was established by running the code
-on a single processor with *settings* using the default Cray compiler
-and gcc. This was then compared with the performance models
+on a single processor with *settings* using the default Cray
+compiler. This was then compared with the performance models
 \ref{eqn:perf-model}-\ref{eqn:perf-model-2n2k} developed above. The
 results are shown in figure \ref{fig:perf-models}. Clearly, the
 baseline using the Cray compiler does not agree well with the results
-of our performance models. The baseline run with gcc gave excellent
+of our performance models. We were unable to determine why the Cray
+compiler has such low performance, and ran additional baselines using
+code compiled with gcc 4.7.1. The baseline run with gcc gave excellent
 agreement with our performance model \ref{eqn:perf-model-2n2k} which
 was developed to describe the algorithim actually used.
 
@@ -205,7 +207,11 @@ was developed to describe the algorithim actually used.
 The performance baseline revelead a large discrepancy between our
 performance model and experimental results for the Cray compiler. We
 have focused our modifications on attempting to improve the results
-using the Cray compiler.
+using the Cray compiler. The results using the gcc compiler agree well
+with our performance model, and further improvements would require
+changes to the underlying data structures or a complete rewrite of the
+force calculation routines, both of which are beyond the scope of this
+project.
 
 The first thing we noticed while analyzing the source code is a large
 number of pointer dereferences to access the arrays storing particle
