@@ -71,34 +71,6 @@ within a predefined region of interaction.
 % Compilation requires only a valid \texttt{C} compiler and a working \texttt{MPI} implementation.
 % The code is relatively short, only a few thousand lines, and is extensively documented. 
 
-\section{Performance Baseline}
-% Erin Molloy
-
-Detailed code timings are already built into \texttt{CoMD}. 
-
-
-
-%
-% 
-%
-%We will run performance
-%experiments with the provided model of copper atoms in a lattice.
-
-%
-% 
-%
-\subsection{Single processor}
-A performance baseline is obtained by running \texttt{CoMD} on a single processor.
-and the size of the lattice by a factor of 10 in each dimension.
-
-
-We will examine problem sizes larger than the size of the L2 cache (2MB - 
-\href{https://bluewaters.ncsa.illinois.edu/user-guide}{\texttt{Blue Waters User Guide}}).
-
-\subsection{Strong scaling}
-
-\subsection{Weak scaling}
-
 \section{Performance model}
 All analysis is done assuming a one-level cache model and
 approximating read and write times as equal.  The constants used in
@@ -202,6 +174,23 @@ model \ref{eqn:perf-model-nk} to give
   \label{fig:perf-models}
 \end{figure}
 
+\section{Performance Baseline}
+% Erin Molloy
+
+A baseline for the force routine was established by running the code
+on a single processor with *settings* using the default Cray compiler
+and gcc. This was then compared with the performance models
+\ref{eqn:perf-model}-\ref{eqn:perf-model-2n2k} developed above. The
+results are shown in figure \ref{fig:perf-models}. Clearly, the
+baseline using the Cray compiler does not agree well with the results
+of our performance models. The baseline run with gcc gave excellent
+agreement with our performance model \ref{eqn:perf-model-2n2k} which
+was developed to describe the algorithim actually used.
+
+\subsection{Strong scaling}
+
+\subsection{Weak scaling}
+
 \section{Modifications}
 \label{sec:mods}
 
@@ -214,7 +203,9 @@ model \ref{eqn:perf-model-nk} to give
 \end{figure}
 
 The performance baseline revelead a large discrepancy between our
-performance model and experimental results.
+performance model and experimental results for the Cray compiler. We
+have focused our modifications on attempting to improve the results
+using the Cray compiler.
 
 The first thing we noticed while analyzing the source code is a large
 number of pointer dereferences to access the arrays storing particle
