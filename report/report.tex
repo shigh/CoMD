@@ -216,39 +216,34 @@ not unrolled by compiler, so we did this by hand. The inner loop of
 the force calculation routine is shown before and after optimization
 in appendix \ref{apd:code-changes}.
 
-% Report and code before/after?
+The Cray compiler reports tell us that no vectorization is occuring in
+the force calculation. After investgating we determined that this is
+in fact the correct behavior, as the data structure used does not
+guarantee that the arrays used are not aliased. All particle
+information is stored in contigous arrays and aliasing occurs when
+calculating the interactions between particles in the same cell. We
+considered modifiying the data structure to remove aliasing, but
+determined that the modifications required are beyond the scope of
+this project.
 
-% -- compiler choice
-% -- noticing that in either choice there is no vectorization
-% -- dereference pointers to arrays before 4 loops
-% -- still no vectorization, why?, why hard to fix?
+Another potential improvement considered was changing the order of
+particles within a cell to improve memory access patterns. The code
+currently sorts the particles within a cell regularly. Because of this
+it is unlikely that substational improvements could be made.
 
-% -- linkcells, ordering is already optimal, notes on double counting instead of search
+After the above modification were made the runtimes using the Cray
+compiler were still several orders of magnitude higher than our
+performance expectations. With no clear reason for this discrepency we
+ran our single core bencharks using code compiled with gcc and found
+that the runtime decreased dramatically. From the gcc compiler report
+it was clear that no additional vectorization was occuring. We have
+been unable to determine the reason for the large difference between
+compilers.
 
 
 \section{Conclusion}
 % REFERENCES???
 
-% Implementing a new data structure is beyond the scope of 
-% this project, but simple changes to improve access patterns, such as changing the order of particles 
-% [within linked cells] in the one-dimensional array, is feasible. We will also examine the loops in the compute 
-% kernel for potential modifications, such as, loop unrolling. Vectorization and pipelining could also be added.
-
-% \subsection{Communication}
-% We will use the scalability expectations to measure the effectiveness of distributed memory parallelism 
-% in the Lennart-Jones potential solver. Halos are exchanged using the function \texttt{sendReceiveParallel()}, which
-% executes a blocking send/receive operation via \texttt{MPI\_Sendrecv}. Potential modifications
-% include implementing non-blocking communication using \texttt{MPI\_Isend}, \texttt{MPI\_Irecv}, and
-% \texttt{MPI\_Waitall} (lecture 25 slide 32). This appears to be effective for messages sizes over 10 bytes. 
-% Thus, we will also need to examine the size of the halos.
-
-% \section{Comparing Results}
-% \label{sec-6}
-% The improved code will be run using the same model problem and problem
-% sizes as the baseline measurement. As mentioned above the \texttt{CoMD}
-% mini-app already has implemented detailed timing measurements. We do
-% not intend to change the overall structure of the code, so the built in measurements 
-% should be sufficient for these comparing run times.
 
 
 \appendix
