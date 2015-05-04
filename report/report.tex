@@ -194,9 +194,13 @@ We approximate $c=4.35\times10^{-10}\;\text{flops}/s$ using the clock
 rate and $r=1.43\times10^{-9}\;\text{B}/s$ using the STREAM benchmark
 on Bluewaters.
 
-
-The data structure used for storing the computational particles is a linear C array.
-A link cell is created to efficiently identify cells within the particle interaction distance 
+The data structure used for storing the computational particles is a
+struct of linear C arrays. Each linear array is divided into equal
+sized sections which store information for particles in a region of
+the simulation domain. The size of the sections is the maximum number
+of particles per region of space, and does not change throughout the
+simulation. This ordering of particles is used to efficently determine
+which particle pairs are within the cutoff radius.
 
 % include picture of particle lattice...
 
