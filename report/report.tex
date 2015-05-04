@@ -21,6 +21,7 @@
 \usepackage{bm}
 \usepackage{algpseudocode}
 \usepackage{hyperref}
+\usepackage{booktabs}
 
 \usepackage{listings}
 
@@ -38,38 +39,114 @@
 \maketitle
 
 \section{Introduction}
-Molecular dynamics (MD) simulations are important for researching physical phenomena 
-such as, the electronic structure of metal and the folding trajectories of proteins. 
-In our final project, we will create performance expectations for a molecular dynamics 
-simulation mini-app, called \href{https://github.com/exmatex/CoMD}{\texttt{CoMD}}, which is designed to expose the core features 
-of molecular dynamics simulations in a code base that is simple to understand and modify.
+Molecular dynamics simulations are important for researching physical phenomena 
+from the electronic structure of metal to the folding trajectories of proteins. 
+In our final project, we create a performance expectation for a computationally
+intensive compute function in a molecular dynamics simulation mini-app, 
+called \href{https://github.com/exmatex/CoMD}{\texttt{CoMD}}, 
+which is designed to expose core features of molecular dynamics simulations 
+in a code base that is simple to understand and modify \cite{CoMD}. Our contributions include
+\begin{itemize}
+    \item [(1)] A {\bf performance expectation} for the Lennart-Jones force computation function.
+    \item [(2)] Simple code {\bf modifications} which improve performance by xx-xx\%.
+    \item [(3)] Suggestions for more involved modifications to greater improve performance.
+    \item [(4)] An illustration that {\bf compiler choice} impacts performance of the compute function.
+\end{itemize}
 
-% Outline contributions
-
-%In our final project, we will create performance expectations for the Lennart-Jones(LJ) model 
-%of potential energy. We propose to
-%\begin{itemize}
-%    \item [1] Create a performance expectation based on memory access patterns.
-%    \item [2] Create a performance expectation of scalability based on communication.
-%    \item [3] Attempt to improve performance and scalability.
-%    \item [4] Compare the scalability of the Lennart-Jones model to that of the Embedded Atom Model.
-%\end{itemize}
-
-\subsection{Background}
+\section{Background}
 Molecular dynamics simulations model the movement of individual particles over time. 
 Particle motion is determined by Newton's well-known equation of motion, $F = ma$. 
-In an $N$-particle simulation, the force on the particle at position 
+In an $N$-particle simulation, the force acting on particle $i$ at position 
 $\bm{r}_i = (x_i, y_i, z_i)$ is given by
-\begin{equation*}
-    F_i = m_i \ddot{\bm{r}}_i = -\frac{\partial}{\partial \bm{r}_i} U(\bm{r}_1, \dots, \bm{r}_N)
-\end{equation*}
-The system of first order ODEs is integrated to find the position of particles at each time step.
-Both the LJ and EAM models utilize inter-particle interactions or ``pair potentials''
-within a predefined region of interaction.
+\begin{align*}
+    \bm{f}_i = m_i \ddot{\bm{r}}_i = -\frac{\partial}{\partial \bm{r}_i} U(\bm{r}_1, \dots, \bm{r}_N)
+\end{align*}
+where $U$ is the potential energy from particle-particle interactions \cite{Intro}.
+The resulting system of first order ODEs is integrated to find the particle positions
+at each time step. The \texttt{CoMD} mini-app computes force using the truncated 
+Lennart-Jones, where the the potential between a pair of particles, call $i$ and $j$,
+is given by
+\begin{align*}
+U_{LJ}(r_{ij}) := 
+\left\{ \begin{array}{l c} 
+    4 \epsilon \left[ \left(\frac{\sigma}{r_{ij}}\right)^{12} - 
+                     \left(\frac{\sigma}{r_{ij}}\right)^6 \right] & r_{ij} \le r_c \\
+     0 & r_{ij} > r_c
+    \end{array} \right.
+\end{align*}
+where
+\begin{align*}
+    r_{ij} = \sqrt{(x_i - x_j)^2 + (y_i - y_j)^2 + (z_i - z_j)^2}, 
+\end{align*}
+is the distance between particles and $r_c = 2.5 \sigma$ is the cut-off radius for 
+particle-particle interactions. Thus, the cut-off radius defines a sphere with volume 
+$(4/3) \pi r_c^3$ within which pair potentials must be computed. Material parameters 
+$\epsilon$ and $\sigma$ are the potential well depth and distance at which the 
+pair potential becomes zero, respectively \cite{Wiki}. 
 
+\section{Performance baseline}
+\texttt{CoMD} includes a default simulation of Copper atoms in a face-centered 
+cubic (FCC) lattice with a spacing of $3.615 \text{ \AA}$ and material parameters of 
+$\epsilon = 0.167 \text{ eV}$ and $\sigma = 2.315 \text{ \AA}$ \cite{CoMD}. 
+Thus, there exist
+\begin{align*}
+     \bigg( \frac{4}{3} \pi (2.5 \cdot 2.315)^3 \text{ \AA}^3 \bigg) \times
+     \bigg( \frac{4 \text{ particles}}{3.615 \text{ \AA} \times 3.615 \text{ \AA} \times 3.615 \text{ \AA}} \bigg)
+     = 69 \text{ particles}
+\end{align*}
+within the cut-off radius of each particle at lattice initialization. 
 
-% Compilation requires only a valid \texttt{C} compiler and a working \texttt{MPI} implementation.
-% The code is relatively short, only a few thousand lines, and is extensively documented. 
+In our scaling study, we use these default parameters with a simulation
+temperatures of 0, 600, and 3000 K. Strong scaling studies with16,384,000 atoms
+are performed on 64, 512, and 4096 processors. Weak scaling studies are
+performed with 32000 atoms per processor for 1, 8, 64, 512, and 4096 processors.
+As the force computation function dominates the total runtime, we target the force computation 
+function to improve the overall performance of \texttt{CoMD} (Table 1).
+
+A performance baseline is obtained by running \texttt{CoMD} on a single processor
+and increasing the size of the lattice by a factor of 10 in each dimension.
+Default parameters are used with a temperature of 0 K, which results in particles 
+remaining in their initial positions throughout the simulation. This enables us to 
+model the number of particle-particle interactions as the constant value.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{c c | c c | c c}
+\toprule
+& \multicolumn{1}{c}{} & \multicolumn{2}{c}{Strong scaling} & \multicolumn{2}{c}{Weak scaling} \\
+\cmidrule(r){3-4} \cmidrule(r){5-6}
+\multicolumn{1}{c}{} & \multicolumn{1}{c}{}  & \multicolumn{1}{c}{force} & \multicolumn{1}{c}{halo} & \multicolumn{1}{c}{force} & \multicolumn{1}{c}{halo} \\
+\multicolumn{1}{c}{temperature} & \multicolumn{1}{c}{\# ranks} & \multicolumn{1}{c}{computation} & \multicolumn{1}{c}{exchange} & \multicolumn{1}{c}{computation} & \multicolumn{1}{c}{exchange} \\
+\midrule
+ & 1 & - & - & 5.1e-1/97.4\% & - \\ 
+& 8 & - & - & 6.2e-1/96.5\% & 1.2e-3/0.2\% \\ 
+$T = 0 K$ & 64 & 4.8e-0/96.8\% & 2.2e-2/0.4\% & 6.2e-1/96.3\% & 3.9e-3/0.6\% \\ 
+& 512 & 6.2e-1/85.9\% & 8.2e-2/11.4\% & 6.2e-1/91.4\% & 5.9e-3/0.9\% \\ 
+& 4096 & 8.3e-2/72.3\% & 1.8e-2/15.7\% & 6.2e-1/91.9\% & 9.0e-3/1.3\% \\ 
+\midrule
+ & 1 & - & - & 5.0e-1/97.4\% & - \\ 
+& 8 & - & - & 6.1e-1/96.4\% & 1.4e-3/0.2\% \\ 
+$T = 600 K$ & 64 & 4.8e-0/94.9\% & 9.2e-2/1.8\% & 6.1e-1/96.2\% & 3.6e-3/0.6\% \\ 
+& 512 & 6.1e-1/95.9\% & 5.7e-3/0.9\% & 6.1e-1/95.9\% & 5.9e-3/0.9\% \\ 
+& 4096 & 8.1e-2/67.9\% & 3.6e-3/3.0\% & 6.1e-1/92.0\% & 9.1e-3/1.4\% \\ 
+\midrule
+ & 1 & - & - & 5.0e-1/97.3\% & - \\ 
+& 8 & - & - & 6.3e-1/96.5\% & 1.0e-3/0.2\% \\ 
+$T = 3000 K$ & 64 & 4.7e-0/96.7\% & 2.3e-2/0.5\% & 6.0e-1/96.2\% & 4.2e-3/0.7\% \\ 
+& 512 & 6.0e-1/95.9\% & 6.1e-3/1.0\% & 6.0e-1/95.9\% & 6.3e-3/1.0\% \\ 
+& 4096 & 8.1e-2/66.3\% & 3.0e-3/2.4\% & 6.1e-1/96.4\% & 9.6e-3/1.5\% \\ 
+\bottomrule
+\end{tabular}
+\caption{Scaling Studies (seconds spent in function/percentage of total runtime)}
+\end{table}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.45\textwidth]{../figs/baseline_forceLJ.pdf}
+    \caption{Time spent in force computation function on a single processor}
+\end{figure}
+
+\newpage
 
 \section{Performance model}
 All analysis is done assuming a one-level cache model and
