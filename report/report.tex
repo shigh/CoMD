@@ -190,9 +190,18 @@ as model 2 in figure \ref{fig:perf-models}.
 \end{figure}
 
 \section{Modifications}
+\label{sec:mods}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\textwidth]{../figs/modified_forceLJ}
+  \caption{Runtime and speedups from the modifications described in
+    section \ref{sec:mods}}
+  \label{fig:mod-force}
+\end{figure}
 
 The performance baseline revelead a large discrepancy between our
-performance model and experimental results. We began to diagnose 
+performance model and experimental results.
 
 The first thing we noticed while analyzing the source code is a large
 number of pointer dereferences to access the arrays storing particle
@@ -228,7 +237,6 @@ that the runtime decreased dramatically. From the gcc compiler report
 it was clear that no additional vectorization was occuring. We have
 been unable to determine the reason for the large difference between
 compilers.
-
 
 \section{Conclusion}
 % REFERENCES???
