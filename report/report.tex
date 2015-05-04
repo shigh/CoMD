@@ -168,13 +168,26 @@ simulation. This ordering of particles is used to efficently determine
 which particle pairs are within the cutoff radius.
 
 This performance model represents a best case scenario for the number
-of operations required to compute the inter-particle forces. The
-actual implementation does not compute only the $n$ interactions
-between neighboring particles, but rather computes a total of $2n$
-interactions. This approach simplifies the implementation. Because of
-this we also also generate performance expectations using $n\approx
-138$ to better approximate the algorithm as implemented. This is shown
-as model 2 in figure \ref{fig:perf-models}.
+of operations required to compute the inter-particle forces. To better
+test the implementation we also developed performance models that
+match the algorithm used. This requires adding a term to take into
+account the work required to check if a particle is within
+$r_c$. Denote the number of particles checked that are not within
+$r_c$ as $k$. Each check requires 3 reads, 3 subtractions, 3
+multiplications and 2 additions to calculation $\| x_i-x_j\|_2^2$,
+giving us the performanced model
+\begin{equation}
+  N \left(\frac{n}{2} \left(26 c + 3 r\right)+\frac{k}{2} \left(8 c + 3 r\right) + 3 r\right) + c + 4 r
+  \label{eqn:perf-model-nk}
+\end{equation}
+The actual implementation does not compute interactions and distance
+checks only once, but rather does so for each particle. This doubles
+the number of interactions and distance checks over the performance
+model \ref{eqn:perf-model-nk} to give
+\begin{equation}
+  N \left(n \left(26 c + 3 r\right)+k \left(8 c + 3 r\right) + 3 r\right) + c + 4 r
+  \label{eqn:perf-model-2n2k}
+\end{equation}
 
 % include picture of particle lattice...
 
