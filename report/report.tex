@@ -71,27 +71,6 @@ within a predefined region of interaction.
 % Compilation requires only a valid \texttt{C} compiler and a working \texttt{MPI} implementation.
 % The code is relatively short, only a few thousand lines, and is extensively documented. 
 
-% \subsection{Memory access}
-% Particles are stored in one-dimensional arrays and accessed via mapping functions
-% [\href{https://github.com/exmatex/CoMD/blob/master/src-mpi/linkCells.c}{\texttt{linkCells.c}}, 
-% $\sim$450 lines]. We will consider the two compute kernels 
-% for calculating inter-particle potentials
-% [\href{https://github.com/exmatex/CoMD/blob/master/src-mpi/ljForce.c}{\texttt{ljForce.c}},
-% $\sim$200 lines;
-% \href{https://github.com/exmatex/CoMD/blob/master/src-mpi/eam.c}{\texttt{eam.c}},
-% $\sim$800 lines].
-
-
-% \subsection{Communication}
-% Particles are decomposed into three-dimensional subdomains 
-% [\href{https://github.com/exmatex/CoMD/blob/master/src-mpi/decomposition.c}{\texttt{decomposition.c}},
-% $\sim$60 lines]. 
-% We will consider the data transferred between subdomains 
-% [\href{https://github.com/exmatex/CoMD/blob/master/src-mpi/haloExchange.c}{\texttt{haloExchange.c}},
-% $\sim$600 lines] and the specific calls to \texttt{MPI}
-% [\href{https://github.com/exmatex/CoMD/blob/master/src-mpi/parallel.c}{\texttt{parallel.c}},
-% $\sim$200 lines].
-
 \section{Performance Baseline}
 % Erin Molloy
 
@@ -117,24 +96,8 @@ We will examine problem sizes larger than the size of the L2 cache (2MB -
 \href{https://bluewaters.ncsa.illinois.edu/user-guide}{\texttt{Blue Waters User Guide}}).
 
 \subsection{Strong scaling}
-% add graphs
 
 \subsection{Weak scaling}
-%A performance baseline will be obtained  running \texttt{CoMD} on multiple processors in
-%both strong an weak scaling studies. The \texttt{CoMD} code repository includes information
-%and scripts for performing these: 
-%\url{http://exmatex.github.io/CoMD/doxygen-mpi/pg_running_comd.html}.
-%In selecting the problem sizes, we will need to consider the number of nodes 
-%each with 64GB of memory and two processors. 
-
-% The network topology of Blue Waters is a three-dimensional torus, so it is also theoretically possible to select 
-% an allocation such that subdomains communicate efficiently with neighbors 
-% (\href{https://bluewaters.ncsa.illinois.edu/topology-aware-scheduling}{Blue Waters Topology
-% Aware Scheduling}). In particular, we should try to insure that both the performance 
-% baseline and other experiments are allocated to sets of nodes with similar topologies.
-%two compute nodes on 
-%each gemini hub enabling neighbor-to-neighbor communication without network contention.
-
 
 \section{Performance model}
 All analysis is done assuming a one-level cache model and
