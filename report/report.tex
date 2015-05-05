@@ -33,81 +33,90 @@
 \author{Scott High and Erin Molloy}
 \date{\today}
 
-
 \begin{document}
 
 \maketitle
 
 \section{Introduction}
 Molecular dynamics simulations are important for researching physical phenomena 
-from the electronic structure of metal to the folding trajectories of proteins. 
+from the electronic structures of metals to the folding trajectories of proteins. 
 In our final project, we create a performance expectation for a computationally
-intensive compute function in a molecular dynamics simulation mini-app, 
-called \href{https://github.com/exmatex/CoMD}{\texttt{CoMD}}, 
-which is designed to expose core features of molecular dynamics simulations 
-in a code base that is simple to understand and modify \cite{CoMD}. Our contributions include
+intensive function in a mini-application, called \href{https://github.com/exmatex/CoMD}{\texttt{CoMD}}, 
+which is a code base designed to expose core features of molecular dynamics simulations
+while being simple to understand and modify \cite{CoMD}. \\
+\noindent Our contributions include
 \begin{itemize}
-    \item [(1)] A {\bf performance expectation} for the Lennart-Jones force computation function.
+    \item [(1)] A {\bf performance expectation} for the Lennard-Jones force computate function.
     \item [(2)] Simple code {\bf modifications} which improve performance by xx-xx\%.
-    \item [(3)] Suggestions for more involved modifications to greater improve performance.
-    \item [(4)] An illustration that {\bf compiler choice} impacts performance of the compute function.
+    \item [(3)] An illustration that {\bf compiler choice} impacts compute function performance.
 \end{itemize}
 
 \section{Background}
-Molecular dynamics simulations model the movement of individual particles over time. 
+A molecular dynamics simulation models the movements of individual particles over time. 
 Particle motion is determined by Newton's well-known equation of motion, $F = ma$. 
 In an $N$-particle simulation, the force acting on particle $i$ at position 
 $\bm{r}_i = (x_i, y_i, z_i)$ is given by
 \begin{align*}
-    \bm{f}_i = m_i \ddot{\bm{r}}_i = -\frac{\partial}{\partial \bm{r}_i} U(\bm{r}_1, \dots, \bm{r}_N)
+    \textbf{F}_i = m_i \ddot{\bm{r}}_i = -\frac{\partial}{\partial \bm{r}_i} U(\bm{r}_1, \dots, \bm{r}_N)
 \end{align*}
 where $U$ is the potential energy from particle-particle interactions \cite{Intro}.
-The resulting system of first order ODEs is integrated to find the particle positions
-at each time step. The \texttt{CoMD} mini-app computes force using the truncated 
-Lennart-Jones, where the the potential between a pair of particles, call $i$ and $j$,
+The resulting system of first order ODEs is integrated to find the positions of particles
+at each time step. The \texttt{CoMD} mini-application computes force using the truncated 
+Lennard-Jones potential, where the the potential between a pair of particles, call $i$ and $j$,
 is given by
-\begin{align*}
-U_{LJ}(r_{ij}) := 
+\begin{align}
+U_{LJ_{trunc}}(r_{ij}) = 
 \left\{ \begin{array}{l c} 
-    4 \epsilon \left[ \left(\frac{\sigma}{r_{ij}}\right)^{12} - 
-                     \left(\frac{\sigma}{r_{ij}}\right)^6 \right] & r_{ij} \le r_c \\
+     U_{LJ}(r_{ij}) - U_{LJ}(r_c) & r_{ij} \le r_c \\
      0 & r_{ij} > r_c
     \end{array} \right.
-\end{align*}
+\end{align}
 where
-\begin{align*}
+\begin{align}
+    U_{LJ}(r) = 
+    4 \epsilon \left\{ \left(\frac{\sigma}{r}\right)^{12} - 
+    \left(\frac{\sigma}{r}\right)^6 \right\}
+\end{align}
+is the Lennard-Jones potential,
+\begin{align}
     r_{ij} = \sqrt{(x_i - x_j)^2 + (y_i - y_j)^2 + (z_i - z_j)^2}, 
-\end{align*}
+\end{align}
 is the distance between particles and $r_c = 2.5 \sigma$ is the cut-off radius for 
-particle-particle interactions. Thus, the cut-off radius defines a sphere with volume 
-$(4/3) \pi r_c^3$ within which pair potentials must be computed. Material parameters 
+particle-particle interactions. In particular, the cut-off radius defines a sphere with
+volume within which pair potentials must be computed. Material parameters 
 $\epsilon$ and $\sigma$ are the potential well depth and distance at which the 
 pair potential becomes zero, respectively \cite{Wiki}. 
 
 \section{Performance baseline}
 \texttt{CoMD} includes a default simulation of Copper atoms in a face-centered 
-cubic (FCC) lattice with a spacing of $3.615 \text{ \AA}$ and material parameters of 
-$\epsilon = 0.167 \text{ eV}$ and $\sigma = 2.315 \text{ \AA}$ \cite{CoMD}. 
-Thus, there exist
-\begin{align*}
+cubic (FCC) lattice with a fully periodic domain and a spacing of $3.615 \text{ \AA}$.
+Material parameters are defined as $\epsilon = 0.167 \text{ eV}$ and $\sigma = 2.315 \text{ \AA}$ 
+\cite{CoMD}. Thus, there exist
+\begin{align}
      \bigg( \frac{4}{3} \pi (2.5 \cdot 2.315)^3 \text{ \AA}^3 \bigg) \times
      \bigg( \frac{4 \text{ particles}}{3.615 \text{ \AA} \times 3.615 \text{ \AA} \times 3.615 \text{ \AA}} \bigg)
-     = 69 \text{ particles}
-\end{align*}
-within the cut-off radius of each particle at lattice initialization. 
+     \approx 69 \text{ particles}
+\end{align}
+within the cut-off radius of each particle at lattice initialization. \\
 
-In our scaling study, we use these default parameters with a simulation
-temperatures of 0, 600, and 3000 K. Strong scaling studies with16,384,000 atoms
-are performed on 64, 512, and 4096 processors. Weak scaling studies are
-performed with 32000 atoms per processor for 1, 8, 64, 512, and 4096 processors.
-As the force computation function dominates the total runtime, we target the force computation 
-function to improve the overall performance of \texttt{CoMD} (Table 1).
+\noindent In a scaling study, we use these default parameters for temperatures of 
+0, 600, and 3000 K. Strong scaling studies with 16,384,000 atoms are
+performed on 64, 512, and 4096 processors. Weak scaling studies are
+performed with 32000 atoms per processor for 1, 8, 64, 512, and 4096 
+processors. Table 1 shows the difference in runtimes for the force compute
+function and the halo exchange. As the former dominated total runtime, 
+we target the force computation function in order to improve the overall 
+performance. \\
 
-A performance baseline is obtained by running \texttt{CoMD} on a single processor
-and increasing the size of the lattice by a factor of 10 in each dimension.
-Default parameters are used with a temperature of 0 K, which results in particles 
-remaining in their initial positions throughout the simulation. This enables us to 
-model the number of particle-particle interactions as the constant value.
+\noindent In our performance baseline, we use default parameters with a temperature of 
+0 K so that particles remain in their initial positions throughout the simulation.
+This enables us to model the number of particle-particle interactions as the 
+constant value. Figure 1 shows the runtimes for the force computation on 
+a single processor with the problem size increasing from 4000 to 4000000 
+atoms. Runtimes increase linearly in the number of atoms. \\
+
+\noindent All scaling and baseline results are obtained on Blue Waters by compiling 
+\texttt{CoMD} with the default Cray compiler (optimization flags: \texttt{-g -O3}).
 
 \begin{table}[h!]
 \centering
@@ -146,101 +155,77 @@ $T = 3000 K$ & 64 & 4.7e-0/96.7\% & 2.3e-2/0.5\% & 6.0e-1/96.2\% & 4.2e-3/0.7\% 
     \caption{Time spent in force computation function on a single processor}
 \end{figure}
 
-\newpage
-
 \section{Performance model}
-All analysis is done assuming a one-level cache model and
-approximating read and write times as equal.  The constants used in
-the performance expectations are determined by the clock rate and
-\texttt{STREAM} benchmark results as measured on Blue Waters.
+All analysis assumes a one-level cache model and approximates read and write 
+times as equal.  The constants used in the performance expectations are determined 
+by the processor clock rate (2.3 GHz) and the results of the \texttt{STREAM} benchmark 
+on Blue Waters. \\
 
-The equations we are calculating for each particle in computer variables are
+\subsection{Computation-based performance model}
+\noindent Our performance model is based on the cost of updating variables associated
+with particle $i$ due to interactions with each of it's $n$ neighboring atoms, $j$. Specifically,
+the potential energy $U_{LJ}$ between the pair of atoms is computed as
 \begin{align}
-  E_{tot} &= \sum_{ij} U_{LJ}(r_{ij}) \\
-  U_{LJ}(r_{ij}) &= 
-  A\left(\frac{1}{r_{ij}}\right)^{6}\left\{ \left(\frac{1}{r_{ij}}\right)^{6} - 1 \right\} \\
-  \notag\\
-  \textbf{F}(r_{ij}) &= - U'_{LJ}(r_{ij})\hat{r}_{ij} \notag\\
-      &=  24 \frac{\epsilon}{r_{ij}} \left\{ 2 \left(\frac{\sigma}{r_{ij}}\right)^{12}
+    U_{LJ}(r_{ij}) = A\left(\frac{1}{r_{ij}}\right)^{6}\left\{ \left(\frac{1}{r_{ij}}\right)^{6} - 1 \right\},           
+\end{align}            
+and the resulting force $\textbf{F} = (F_x, F_y, F_z)$ is computed as
+\begin{align}
+    \textbf{F}(r_{ij}) &= - U'_{LJ}(r_{ij})\hat{r}_{ij} \notag\\
+        &= 24 \frac{\epsilon}{r_{ij}} \left\{ 2 \left(\frac{\sigma}{r_{ij}}\right)^{12}
               - \left(\frac{\sigma}{r_{ij}}\right)^6 \right\} \hat{r}_{ij} \notag\\
-              &=  A \frac{1}{r_{ij}^2} \left(\frac{1}{r_{ij}}\right)^{6} \left\{ 2 \left(\frac{1}{r_{ij}}\right)^{6}
-              - 1 \right\} \textbf{r}_{ij}
+        &=  A \frac{1}{r_{ij}^2} \left(\frac{1}{r_{ij}}\right)^{6} \left\{ 2 \left(\frac{1}{r_{ij}}\right)^{6}
+              - 1 \right\} \textbf{r}_{ij},
 \end{align}
-in a fully periodic domain. The total number of simulation particles
-is $N$, and each particle has $n$ neighbors within
-$r_c=r_{\text{cutoff}}$.
-
-We develope our performance model by calculating the cost of updating
-particle $i$ and its interaction with each of its $n$ neighbors
-$j$. The cost is:
+where $N$ is the total number of particles in the simulation, $n$ is the number of neighboring
+particles, that is, particles within a sphere defined by the cut-off radius, $r_c$. In addition,
+the total energy of the system $E_{tot}$, computed as
+\begin{align}
+    E_{tot} &= \sum_{ij} U_{LJ}(r_{ij}),
+\end{align}
+is updated within the innermost loop of the compute function. The resulting cost is
 \begin{itemize}
-\item[A)] 3 loads for particle $i$'s position
-\item[B)] For each particle $j$ where $r_{ij}<r_c$
+\item[(A)] 3 loads to get particle $i$'s position, $r_i = (x_i, y_i, z_i)$
+\item[(B)] For each particle $j$ where $r_{ij}<r_c$
   \begin{enumerate}
-    \item $3$ loads for particle $j$'s position
-    \item 3 subtractions, 3 multiplications, 2 additions and 1 division to calculate $\frac{1}{r_{ij}^2}$ 
-    \item 3 multiplications to calculate $\left(\frac{1}{r_{ij}^2}\right)^3=\left(\frac{1}{r_{ij}}\right)^6$
-    \item 2 subtractions and 2 multiplications to calculate $U_{LJ}$ (1 subtraction is for cutoff potential)
-    \item 3 multiplications and 1 subtraction to calclulate $F(r_{ij})$
-    \item 3 multiplications and 3 additions to calculate and update $F_{x,y,z}$
+    \item 3 loads to get particle $j$'s position, $r_j = (x_j, y_j, z_j)$
+    \item 3 subtractions, 3 multiplications, 2 additions, and 1 division to calculate the term, $\frac{1}{r_{ij}^2}$ 
+             (equation 2)
+    \item 3 multiplications to calculate the term, $\left(\frac{1}{r_{ij}^2}\right)^3 = \left(\frac{1}{r_{ij}}\right)^6$
+    \item 2 subtractions and 2 multiplications to calculate the potential $U_{LJ}$ (equation 5), 
+             where 1 subtraction is for cutoff potential (equation 1)
+    \item 3 multiplications and 1 subtraction to calculate magnitude of the force, $F(r_{ij})$ (equation 6)
+    \item 3 multiplications and 3 additions to calculate and update the force vector, $\textbf{F}$
   \end{enumerate}
-\item[C)] 1 write to save $U_{LJ}$. (Assume we can save the $U_{LJ}(r_{ji})$ term for free)
-\item[D)] 3 writes to save $F_{x,y,z}$
-\item[E)] 1 addition to update $E$
+\item[(C)] 1 write to save $U_{LJ}$, assuming the $U_{LJ}(r_{ji})$ term is saved for free
+\item[(D)] 3 writes to save $\textbf{F} = (F_x, F_y, F_z)$
+\item[(E)] 1 addition to update $E_{tot}$ (equation 7)
 \end{itemize}
-The total cost is $N(A+nB/2)+C+D+E$, where the $1/2$ is to account for
-double counting. Using $c$ for the cost of a floating point operation,
-$w$ for the cost of a write and $r$ for the cost of a read the
-estimated cost is
+The total cost is then
+\begin{align}
+    N\bigg(A+\frac{nB}{2}\bigg)+C+D+E,
+\end{align}
+where the factor of $1/2$ accounts for double counting particles in pairwise interactions, 
+that is, the interaction between particle $i$ and particle $j$ is the same as the interaction 
+between particle $j$ and particle $i$ making it unnecessary to compute both interactions. \\
+
+\noindent Let $c$ be the cost of a floating point operation, $w$ be the cost of a write, 
+and $r$ be the cost of a read. Then the cost can be approximated as
 \begin{equation}
-N \left(\frac{n}{2} \left(26 c + 3 w\right) + 3 w\right) + c + 4 r
+    N \left(\frac{n}{2} \left(26 c + 3 w\right) + 3 w\right) + c + 4 r,
 \end{equation}
-Approximating reads and writes as equal reduces this to
+which reduces to
 \begin{equation}
-  N \left(\frac{n}{2} \left(26 c + 3 r\right) + 3 r\right) + c + 4 r
+  N \left(\frac{n}{2} \left(26 c + 3 m\right) + 3 m\right) + c + 4 m
   \label{eqn:perf-model}
 \end{equation}
-We approximate $n$ by noting that the density of atoms in an FCC
-lattice is 4 atoms/cell, so the average number of particles within in
-a sphere of radius $r_c$ is $n \approx 4\frac{4\pi}{3}r_c^3\approx69$.
-We approximate $c=4.35\times10^{-10}\;\text{flops}/s$ using the clock
-rate and $r=1.43\times10^{-9}\;\text{B}/s$ using the STREAM benchmark
-on Bluewaters. The results of this performance model are shown as
-model 1 in figure \ref{fig:perf-models}.
-
-The data structure used for storing the computational particles is a
-struct of linear C arrays. Each linear array is divided into equal
-sized sections which store information for particles in a region of
-the simulation domain. The size of the sections is the maximum number
-of particles per region of space, and does not change throughout the
-simulation. This ordering of particles is used to efficently determine
-which particle pairs are within the cutoff radius.
-
-This performance model represents a best case scenario for the number
-of operations required to compute the inter-particle forces. To better
-test the implementation we also developed performance models that
-match the algorithm used. This requires adding a term to take into
-account the work required to check if a particle is within
-$r_c$. Denote the number of particles checked that are not within
-$r_c$ as $k$. Each check requires 3 reads, 3 subtractions, 3
-multiplications and 2 additions to calculation $\| x_i-x_j\|_2^2$,
-giving us the performanced model
-\begin{equation}
-  N \left(\frac{n}{2} \left(26 c + 3 r\right)+\frac{k}{2} \left(8 c + 3 r\right) + 3 r\right) + c + 4 r
-  \label{eqn:perf-model-nk}
-\end{equation}
-The actual implementation does not compute interactions and distance
-checks only once, but rather does so for each particle. This doubles
-the number of interactions and distance checks over the performance
-model \ref{eqn:perf-model-nk} to give
-\begin{equation}
-  N \left(n \left(26 c + 3 r\right)+k \left(8 c + 3 r\right) + 3 r\right) + c + 4 r
-  \label{eqn:perf-model-2n2k}
-\end{equation}
-
-% include picture of particle lattice...
-
-% Graphs -- Erin
+assuming equal read and write times, call $m$. Specifically, we approximate
+$c = 4.35\times10^{-10}\;\text{flops}/s$ using the processor clock rate, 
+$m = 1.43\times10^{-9}\;\text{B}/s$ using the STREAM benchmark on Bluewaters,
+and $n = 69$ from the known cut-off radius and lattice parameters (equation 4).
+The results of this performance model are shown as model 1 in figure 
+\ref{fig:perf-models} for increasing $N$. Although both our results and the 
+computation-based performance model scale linearly with the number of atoms. 
+Our performance expectation is \# orders of magnitude less than our results!
 
 \begin{figure}[h!]
   \centering
@@ -250,28 +235,96 @@ model \ref{eqn:perf-model-nk} to give
     \ref{eqn:perf-model} with $n=2\times69$.}
   \label{fig:perf-models}
 \end{figure}
+\noindent 
 
-\section{Performance Baseline}
-% Erin Molloy
+\subsection{Implementation-based model}
+\section{Compiler choice}
+The computation-based performance model represents a best case scenario 
+for the number of operations required to compute the inter-particle forces. 
+To better understand our baseline results, we also develop a performance model 
+that captures the features of the algorithm's implementation. \\
 
-A baseline for the force routine was established by running the code
-on a single processor with *settings* using the default Cray
-compiler. This was then compared with the performance models
-\ref{eqn:perf-model}-\ref{eqn:perf-model-2n2k} developed above. The
-results are shown in figure \ref{fig:perf-models}. Clearly, the
-baseline using the Cray compiler does not agree well with the results
-of our performance models. We were unable to determine why the Cray
-compiler has such low performance, and ran additional baselines using
-code compiled with gcc 4.7.1. The baseline run with gcc gave excellent
-agreement with our performance model \ref{eqn:perf-model-2n2k} which
-was developed to describe the algorithim actually used.
+\noindent The data structure used for storing the computational particles is a
+struct of linear C arrays. Each linear array is divided into equal sized sections which 
+store information for particles in a region of the simulation domain. 
+Section size is the maximum number of particles per region of space, 
+and does not change throughout the simulation. 
+This ordering of particles is used to efficiently determine, which particle pairs are within 
+the cutoff radius. \\
 
-\subsection{Strong scaling}
+\noindent However, this still requires work to ``check'' whether a particle 
+is within the cut-off radius. Specifically, the inter-particle distance is computed as
+\begin{align*}
+    \| \bm{r}_i - \bm{r}_j\|_2^2,
+\end{align*}
+which requires an additional 3 reads, 3 subtractions, 3 multiplications, and 2 additions.
+If we denote the number of particles checked, which are not within the sphere defined 
+by $r_c$, as $k$, then our performance model can be updated
+\begin{equation}
+  N \left(\frac{n}{2} \left(26 c + 3 r\right)+\frac{k}{2} \left(8 c + 3 r\right) + 3 r\right) + c + 4 r
+  \label{eqn:perf-model-nk}
+\end{equation}
+In addition, the actual implementation does not compute interactions and distance
+checks once but rather does so for each particle. This doubles the number of interactions 
+and distance checks in our the performance model \ref{eqn:perf-model-nk} to give
+\begin{equation}
+  N \left(n \left(26 c + 3 r\right)+k \left(8 c + 3 r\right) + 3 r\right) + c + 4 r.
+  \label{eqn:perf-model-2n2k}
+\end{equation}
+The results of these implementation-based performance model are shown as model \# in figure 
+%\ref{fig:perf-models} 
+for increasing $N$. Although both our results and the implementation-based performance models 
+scale linearly with the number of atoms, our performance expectation is still \# orders of magnitude 
+less than our results!
 
-\subsection{Weak scaling}
+% add figure
+
+\section{Compiler choice}
+A baseline for the force compute routine is established by running \texttt{CoMD}, 
+specifically using the default Cray compiler (with optimization flags: \texttt{-g -O3}).
+These baseline results compare poorly with the performance models 
+as shown in figure \ref{fig:perf-models}. We were unable to determine why the Cray
+compiler has such poor performance and obtained an additional baseline using
+the \texttt{CoMD} code compiled with gcc 4.7.1. The gcc baseline gives excellent
+agreement with our performance model \ref{eqn:perf-model-2n2k}, which
+is developed to describe the algorithm actually implemented.
+
+% include figure of 3 performance models, gcc and cc results
 
 \section{Modifications}
 \label{sec:mods}
+The performance baseline revealed a large discrepancy between our
+performance model and experimental results for the Cray compiler. We
+have focused our modifications on attempting to improve the results
+using the Cray compiler. The results using the gcc compiler agree well
+with our performance model, and further improvements would require
+changes to the underlying data structures or a complete rewrite of the
+force calculation routines, both of which are beyond the scope of this
+project. \\
+
+\noindent The force compute function uses a large number of pointer dereferences
+to access the arrays storing particle information. For example, accessing the $m^{th}$ 
+component of the position vector corresponding to particle $i$ requires two pointer 
+dereferences: \texttt{s->atoms->r[iOff][m]}. From the code report generated by the Cray 
+compiler, it was clear that these dereferences were being done {\bf each time} the
+pointers were accessed in the innermost loop of the force calculation. 
+Thus, a simple optimization is to dereference these pointers outside the computation 
+loops (\ref{apd:code-changes}). \\
+
+\noindent In addition, small loops over a set of 3 real variables are frequently used to
+work with position $\bm{r}$ and force $\textbf{F}$ vectors. Not only does this prevent the pipelining
+of instructions, but this also requires additional clock cycles to execute branch instructions.
+Accordingly, we unrolled all of these loops by hand. The inner loop of the force calculation 
+routine is shown before and after optimization in appendix \ref{apd:code-changes}. \\
+
+\noindent The Cray compiler reports tell us that no vectorization occurs
+during the force calculation. After some investigation, we determined that 
+this is, in fact, the correct behavior, as the data structure does not
+guarantee that pointers to arrays associated with particle data are not aliased. 
+Specifically, all particle information is stored in contiguous arrays and aliasing does occur
+when calculating the interactions between particles within the same cell. We
+considered modifying the data structure to remove aliasing; however, we decided 
+that such substantial modifications were beyond the scope of this project. \\
 
 \begin{figure}[h!]
   \centering
@@ -281,54 +334,38 @@ was developed to describe the algorithim actually used.
   \label{fig:mod-force}
 \end{figure}
 
-The performance baseline revelead a large discrepancy between our
-performance model and experimental results for the Cray compiler. We
-have focused our modifications on attempting to improve the results
-using the Cray compiler. The results using the gcc compiler agree well
-with our performance model, and further improvements would require
-changes to the underlying data structures or a complete rewrite of the
-force calculation routines, both of which are beyond the scope of this
-project.
+\noindent Another potential improvement considered was changing the order of
+particles within a cell to improve memory access patterns. However, as the
+current implementation already sorts the particles within a cell regularly, it is unlikely 
+that we could substantially improve upon its current performance. \\
 
-The first thing we noticed while analyzing the source code is a large
-number of pointer dereferences to access the arrays storing particle
-information. From the code report generated by the Cray compiler it
-was clear that these dereferences were being done everytime the
-pointers were accessed in the innermost loop of the force
-calcuation. A simple optimzation was then to derefernce these pointers
-before the computation. The small loops over real3 variables are also
-not unrolled by compiler, so we did this by hand. The inner loop of
-the force calculation routine is shown before and after optimization
-in appendix \ref{apd:code-changes}.
-
-The Cray compiler reports tell us that no vectorization is occuring in
-the force calculation. After investgating we determined that this is
-in fact the correct behavior, as the data structure used does not
-guarantee that the arrays used are not aliased. All particle
-information is stored in contigous arrays and aliasing occurs when
-calculating the interactions between particles in the same cell. We
-considered modifiying the data structure to remove aliasing, but
-determined that the modifications required are beyond the scope of
-this project.
-
-Another potential improvement considered was changing the order of
-particles within a cell to improve memory access patterns. The code
-currently sorts the particles within a cell regularly. Because of this
-it is unlikely that substational improvements could be made.
-
-After the above modification were made the runtimes using the Cray
-compiler were still several orders of magnitude higher than our
-performance expectations. With no clear reason for this discrepency we
-ran our single core bencharks using code compiled with gcc and found
-that the runtime decreased dramatically. From the gcc compiler report
-it was clear that no additional vectorization was occuring. We have
-been unable to determine the reason for the large difference between
-compilers.
+\noindent The above modifications led to a \#-\# speed-up using the Cray
+compiler; however, runtimes are still several orders of magnitude higher than our
+performance expectations. As the gcc compiler only experienced a speed-up of \#-\#, 
+it is possible that the gcc compiler had already made some of our modifications;
+however, we have not been able to identify the causes of the remaining discrepancy 
+between compilers as both compiler reports show no vectorization.
 
 \section{Conclusion}
-% REFERENCES???
+\noindent In summary, we ran scaling studies and profiled the \texttt{CoMD} code base to 
+determine a routine that could be targeted to enhance performance. We then created a 
+{\bf performance expectation} for the Lennard-Jones force compute function and used this performance 
+model to make modifications to this computationally intensive routine. We obtained speed-ups of
+\#-\#; however, the biggest differences in performance were due to the choice of compiler. \\
+Finally, we adapted our performance expectation to include implementation details, which could allow 
+others to determine how changing the data structure to reduce accesses to particles outside 
+the cut-off radius would impact performance before spending time implementing such substantial changes 
+to \texttt{CoMD}.
 
-
+\begin{thebibliography}{}
+    \bibitem{CoMD} ADD ME
+    \bibitem{Intro} Allen, Michael P. Introduction to Molecular Dynamics Simulation. 
+      {\it Computational Soft Matter: From Synthetic Polymers to Proteins, Lecture Notes}, 
+      Norbert Attig, Kurt Binder, Helmut Grubmuller, Kurt Kremer (Eds.),
+      John von Neumann Institute for Computing, Julich,
+      NIC Series, Vol. 23, ISBN 3-00-012641-4, pp. 1-28, 2004.
+      \bibitem{Wiki} \url{http://en.wikipedia.org/wiki/Lennard-Jones_potential}
+\end{thebibliography}
 
 \appendix
 \section{Code changes}
