@@ -87,6 +87,14 @@ the potential well depth and distance at which the pair potential
 becomes zero, respectively \cite{Wiki}.
 
 \section{Performance baseline}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.45\textwidth]{../figs/baseline_forceLJ.pdf}
+  \caption{Baseline results with Cray compiler.}
+  \label{fig:baseline}
+\end{figure}
+
 \texttt{CoMD} includes a default simulation of Copper atoms in a face-centered 
 cubic (FCC) lattice with a fully periodic domain and a spacing of $3.615 \text{ \AA}$.
 Material parameters are defined as $\epsilon = 0.167 \text{ eV}$ and $\sigma = 2.315 \text{ \AA}$ 
@@ -98,24 +106,22 @@ Material parameters are defined as $\epsilon = 0.167 \text{ eV}$ and $\sigma = 2
 \end{align}
 within the cut-off radius of each particle at lattice initialization. \\
 
- In a scaling study, we use these default parameters for temperatures of 
+In our scaling studies, we use default parameters for temperatures of
 0, 600, and 3000 K. Strong scaling studies with 16,384,000 atoms are
 performed on 64, 512, and 4096 processors. Weak scaling studies are
-performed with 32000 atoms per processor for 1, 8, 64, 512, and 4096 
-processors. Table 1 shows the difference in runtimes for the force compute
-function and the halo exchange. As the former dominated total runtime, 
-we target the force computation function in order to improve the overall 
-performance. \\
-
- In our performance baseline, we use default parameters with a temperature of 
-0 K so that particles remain in their initial positions throughout the simulation.
-This enables us to model the number of particle-particle interactions as the 
-constant value. Figure 1 shows the runtimes for the force computation on 
-a single processor with the problem size increasing from 4000 to 4000000 
-atoms. Runtimes increase linearly in the number of atoms. \\
-
- All scaling and baseline results are obtained on Blue Waters by compiling 
-\texttt{CoMD} with the default Cray compiler (optimization flags: \texttt{-g -O3}).
+performed with 32000 atoms per processor for 1, 8, 64, 512, and 4096
+processors.  All scaling and baseline results are obtained on Blue
+Waters by compiling \texttt{CoMD} with the default Cray compiler
+(optimization flags: \texttt{-g -O3}). Table \ref{tbl:times} shows the
+difference in runtimes for the force computation function and the halo
+exchange. The baseline results are shown in figure
+\ref{fig:baseline}. As the former dominated total runtime, we target
+the force computation function in order to improve the overall
+performance. In our performance baseline, when default parameters are
+used with a temperature of 0 K the particles remain in their initial
+positions throughout the simulation.  This enables us to model the
+number of particle-particle interactions as constant.
+\\
 
 \begin{table}[h!]
 \centering
@@ -146,6 +152,7 @@ $T = 3000 K$ & 64 & 4.7e-0/96.7\% & 2.3e-2/0.5\% & 6.0e-1/96.2\% & 4.2e-3/0.7\% 
 \bottomrule
 \end{tabular}
 \caption{Scaling Studies (seconds spent in function/percentage of total runtime)}
+\label{tbl:times}
 \end{table}
 
 % \begin{figure}[h!]
@@ -160,14 +167,24 @@ times as equal.  The constants used in the performance expectations are determin
 by the processor clock rate (2.3 GHz) and the results of the \texttt{STREAM} benchmark 
 on Blue Waters. \\
 
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.45\textwidth]{../figs/compiler_forceLJ.pdf}
+  \caption{Performance models and baseline results}
+  \label{fig:perf-models}
+\end{figure}
+
 \subsection{Computation-based performance model}
- Our performance model is based on the cost of updating variables associated
-with particle $i$ due to interactions with each of it's $n$ neighboring atoms, $j$. Specifically,
-the potential energy $U_{LJ}$ between the pair of atoms is computed as
+We first develop a performance model that represents the best
+performance a force calculation algorithm can possibly achieve. Our
+model is based on the cost of updating variables associated with
+particle $i$ due to interactions with each of it's $n$ neighboring
+atoms, $j$. Specifically, the potential energy $U_{LJ}$ between the
+pair of atoms is computed as
 \begin{align}
     U_{LJ}(r_{ij}) = A\left(\frac{1}{r_{ij}}\right)^{6}\left\{ \left(\frac{1}{r_{ij}}\right)^{6} - 1 \right\},           
 \end{align}            
-and the resulting force $\textbf{F} = (F_x, F_y, F_z)$ is computed as
+and the resulting force $\textbf{F}$ is computed as
 \begin{align}
     \textbf{F}(r_{ij}) &= - U'_{LJ}(r_{ij})\hat{r}_{ij} \notag\\
         &= 24 \frac{\epsilon}{r_{ij}} \left\{ 2 \left(\frac{\sigma}{r_{ij}}\right)^{12}
@@ -175,39 +192,38 @@ and the resulting force $\textbf{F} = (F_x, F_y, F_z)$ is computed as
         &=  A \frac{1}{r_{ij}^2} \left(\frac{1}{r_{ij}}\right)^{6} \left\{ 2 \left(\frac{1}{r_{ij}}\right)^{6}
               - 1 \right\} \textbf{r}_{ij},
 \end{align}
-where $N$ is the total number of particles in the simulation, $n$ is the number of neighboring
-particles, that is, particles within a sphere defined by the cut-off radius, $r_c$. In addition,
-the total energy of the system $E_{tot}$, computed as
+where $N$ is the total number of particles in the simulation and $n$
+is the number of particles within a sphere defined by the cut-off
+radius, $r_c$. In addition, the total energy of the system $E_{tot}$
 \begin{align}
     E_{tot} &= \sum_{ij} U_{LJ}(r_{ij}),
 \end{align}
 is updated within the innermost loop of the compute function. The resulting cost is
 \begin{itemize}
-\item[(A)] 3 loads to get particle $i$'s position, $r_i = (x_i, y_i, z_i)$
+\item[(A)] 3 loads to get particle $i$'s position, $\v{r}_i$
 \item[(B)] For each particle $j$ where $r_{ij}<r_c$
   \begin{enumerate}
-    \item 3 loads to get particle $j$'s position, $r_j = (x_j, y_j, z_j)$
+    \item 3 loads to get particle $j$'s position, $\v{r}_j$
     \item 3 subtractions, 3 multiplications, 2 additions, and 1 division to calculate $\frac{1}{r_{ij}^2}$ 
     \item 3 multiplications to calculate $\left(\frac{1}{r_{ij}^2}\right)^3 = \left(\frac{1}{r_{ij}}\right)^6$
     \item 2 subtractions and 2 multiplications to calculate the potential $U_{LJ}$  
-             where 1 subtraction is for cutoff potential
-    \item 3 multiplications and 1 subtraction to calculate magnitude of the force, $F(r_{ij})$ (equation 6)
+             (1 subtraction is for the cutoff potential)
+    \item 3 multiplications and 1 subtraction to calculate magnitude of the force, $F(r_{ij})$
     \item 3 multiplications and 3 additions to calculate and update the force vector, $\textbf{F}$
   \end{enumerate}
-\item[(C)] 1 write to save $U_{LJ}$, assuming the $U_{LJ}(r_{ji})$ term is saved for free
-\item[(D)] 3 writes to save $\textbf{F} = (F_x, F_y, F_z)$
-\item[(E)] 1 addition to update $E_{tot}$ (equation 7)
+\item[(C)] 1 write to save $U_{LJ}(r_{ij})$, assuming the $U_{LJ}(r_{ji})$ term is saved for free
+\item[(D)] 3 writes to save $\textbf{F}$
+\item[(E)] 1 addition to update $E_{tot}$
 \end{itemize}
 The total cost is then
 \begin{align}
-    N\bigg(A+\frac{nB}{2}\bigg)+C+D+E,
+  N\bigg(A+\frac{nB}{2}\bigg)+C+D+E
+  \label{eqn:cost-simple}
 \end{align}
-where the factor of $1/2$ accounts for double counting particles in pairwise interactions, 
-that is, the interaction between particle $i$ and particle $j$ is the same as the interaction 
-between particle $j$ and particle $i$ making it unnecessary to compute both interactions. \\
-
- Let $c$ be the cost of a floating point operation, $w$ be the cost of a write, 
-and $r$ be the cost of a read. Then the cost can be approximated as
+where the factor of $1/2$ accounts for double counting calculations of
+the symmetric pairwise interactions. Let $c$ be the cost of a floating
+point operation, $w$ be the cost of a write, and $r$ be the cost of a
+read. Then the cost equation \ref{eqn:cost-simple} becomes
 \begin{equation}
     N \left(\frac{n}{2} \left(26 c + 3 w\right) + 3 w\right) + c + 4 r,
 \end{equation}
@@ -216,16 +232,15 @@ which reduces to
   N \left(\frac{n}{2} \left(26 c + 3 m\right) + 3 m\right) + c + 4 m
   \label{eqn:perf-model}
 \end{equation}
-assuming equal read and write times, call $m$. Specifically, we
-approximate $c = 4.35\times10^{-10}\;\text{flops}/s$ using the
-processor clock rate, $m = 1.43\times10^{-9}\;\text{B}/s$ using the
-STREAM benchmark on Bluewaters, and $n = 69$ from the known cut-off
-radius and lattice parameters (equation 4).  The results of this
-performance model are shown in figure \ref{fig:perf-models} for
-increasing $N$. Although both our results and the computation-based
-performance model scale linearly with the number of atoms, our
-performance expectation is nearly 2 orders of magnitude less than our
-results!
+assuming equal read and write times $m$. Specifically, we approximate
+$c = 4.35\times10^{-10}\;\text{flops}/s$ using the processor clock
+rate and $m = 1.43\times10^{-9}\;\text{B}/s$ using the STREAM
+benchmark on Bluewaters. We estimate $n = 69$ from the cut-off radius
+and lattice parameters. The results of this performance model are
+shown in figure \ref{fig:perf-models}. Both our results and the
+computation-based performance model scale linearly with the number of
+atoms, however our performance expectation is nearly 2 orders of
+magnitude less than our experimental results.
 
 % \begin{figure}[h!]
 %   \centering
@@ -233,12 +248,6 @@ results!
 %   \caption{Computation-based performance model and baseline results}
 %   \label{fig:comp-baseline}
 % \end{figure}
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=0.45\textwidth]{../figs/compiler_forceLJ.pdf}
-  \caption{Performance models and baseline results}
-  \label{fig:perf-models}
-\end{figure}
 
 \subsection{Implementation-based model}
 The computation-based performance model represents a best case scenario 
