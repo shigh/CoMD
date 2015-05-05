@@ -225,17 +225,15 @@ and $n = 69$ from the known cut-off radius and lattice parameters (equation 4).
 The results of this performance model are shown as model 1 in figure 
 \ref{fig:perf-models} for increasing $N$. Although both our results and the 
 computation-based performance model scale linearly with the number of atoms. 
-Our performance expectation is \# orders of magnitude less than our results!
+Our performance expectation is 3 orders of magnitude less than our results!
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=0.5\textwidth]{../figs/perfmodel_forceLJ}
-  \caption{Performance models and baseline results. Model 1 is
-    equation \ref{eqn:perf-model} with $n=69$ and model 2 is
-    \ref{eqn:perf-model} with $n=2\times69$.}
-  \label{fig:perf-models}
+  \includegraphics[width=0.45\textwidth]{../figs/perfmodel_forceLJ.pdf}
+  \caption{Computation-based performance model and baseline results}
+  %\label{fig:perf-models}
 \end{figure}
-\noindent 
+
 
 \subsection{Implementation-based model}
 \section{Compiler choice}
@@ -273,11 +271,16 @@ and distance checks in our the performance model \ref{eqn:perf-model-nk} to give
 \end{equation}
 The results of these implementation-based performance model are shown as model \# in figure 
 %\ref{fig:perf-models} 
-for increasing $N$. Although both our results and the implementation-based performance models 
-scale linearly with the number of atoms, our performance expectation is still \# orders of magnitude 
-less than our results!
+for increasing $N$. These implementation-based performance models 
+scale linearly with the number of atoms and appear much closer to our experimental results; however,
+our performance expectation is still 2-2.5 orders of magnitude less than our baseline!
 
-% add figure
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.45\textwidth]{../figs/implmodel_forceLJ.pdf}
+  \caption{Implementation-based performance models and baseline results}
+  %\label{fig:perf-models}
+\end{figure}
 
 \section{Compiler choice}
 A baseline for the force compute routine is established by running \texttt{CoMD}, 
@@ -285,11 +288,17 @@ specifically using the default Cray compiler (with optimization flags: \texttt{-
 These baseline results compare poorly with the performance models 
 as shown in figure \ref{fig:perf-models}. We were unable to determine why the Cray
 compiler has such poor performance and obtained an additional baseline using
-the \texttt{CoMD} code compiled with gcc 4.7.1. The gcc baseline gives excellent
-agreement with our performance model \ref{eqn:perf-model-2n2k}, which
-is developed to describe the algorithm actually implemented.
+the \texttt{CoMD} code compiled with gcc 4.7.1. This compiler change alone
+resulted in a 3.5 speed-up. The gcc baseline is only 2.39 orders of magnitude
+off from our computation-based model and 1.5-1.8 orders of magnitude off
+from our implementation-based models.
 
-% include figure of 3 performance models, gcc and cc results
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\textwidth]{../figs/compiler_forceLJ.pdf}
+  \caption{Effects of compiler choice}
+  %\label{fig:perf-models}
+\end{figure}
 
 \section{Modifications}
 \label{sec:mods}
@@ -328,10 +337,10 @@ that such substantial modifications were beyond the scope of this project. \\
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=\textwidth]{../figs/modified_forceLJ}
+  \includegraphics[width=0.9\textwidth]{../figs/compiler_forceLJ.pdf}
   \caption{Runtime and speedups from the modifications described in
-    section \ref{sec:mods}}
-  \label{fig:mod-force}
+   section \ref{sec:mods}}
+   \label{fig:mod-force}
 \end{figure}
 
 \noindent Another potential improvement considered was changing the order of
@@ -339,12 +348,22 @@ particles within a cell to improve memory access patterns. However, as the
 current implementation already sorts the particles within a cell regularly, it is unlikely 
 that we could substantially improve upon its current performance. \\
 
-\noindent The above modifications led to a \#-\# speed-up using the Cray
+\noindent The above modifications led to a 1.24-1.27 speed-up using the Cray
 compiler; however, runtimes are still several orders of magnitude higher than our
-performance expectations. As the gcc compiler only experienced a speed-up of \#-\#, 
+performance expectations. As the gcc compiler only experienced a speed-up of 1.04-1.05, 
 it is possible that the gcc compiler had already made some of our modifications;
 however, we have not been able to identify the causes of the remaining discrepancy 
 between compilers as both compiler reports show no vectorization.
+
+\noindent Even after these modifications, we still need speed-ups of 67-79 and
+ 24-27 for the cc and gcc compilers, respectively, to obtain experimental 
+ runtimes close to our performance expectation.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\textwidth]{../figs/futurework_forceLJ.pdf}
+  \caption{Desired speed-ups}
+\end{figure}
 
 \section{Conclusion}
 \noindent In summary, we ran scaling studies and profiled the \texttt{CoMD} code base to 
