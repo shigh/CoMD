@@ -22,12 +22,12 @@
 \usepackage{algpseudocode}
 \usepackage{hyperref}
 \usepackage{booktabs}
-
 \usepackage{listings}
 
 \lstset{language=C}
 \newcommand{\pd}[2]{\frac{\partial #1}{ \partial #2}}
 \renewcommand{\v}[1]{\bold{#1}}
+\setlength{\parindent}{0cm}
 
 \title{CS 598 Final Project}
 \author{Scott High and Erin Molloy}
@@ -44,7 +44,7 @@ In our final project, we create a performance expectation for a computationally
 intensive function in a mini-application, called \href{https://github.com/exmatex/CoMD}{\texttt{CoMD}}, 
 which is a code base designed to expose core features of molecular dynamics simulations
 while being simple to understand and modify \cite{CoMD}. \\
-\noindent Our contributions include
+ Our contributions include
 \begin{itemize}
     \item [(1)] A {\bf performance expectation} for the Lennard-Jones force computate function.
     \item [(2)] Simple code {\bf modifications} which improve performance by 25-27\%.
@@ -99,7 +99,7 @@ Material parameters are defined as $\epsilon = 0.167 \text{ eV}$ and $\sigma = 2
 \end{align}
 within the cut-off radius of each particle at lattice initialization. \\
 
-\noindent In a scaling study, we use these default parameters for temperatures of 
+ In a scaling study, we use these default parameters for temperatures of 
 0, 600, and 3000 K. Strong scaling studies with 16,384,000 atoms are
 performed on 64, 512, and 4096 processors. Weak scaling studies are
 performed with 32000 atoms per processor for 1, 8, 64, 512, and 4096 
@@ -108,14 +108,14 @@ function and the halo exchange. As the former dominated total runtime,
 we target the force computation function in order to improve the overall 
 performance. \\
 
-\noindent In our performance baseline, we use default parameters with a temperature of 
+ In our performance baseline, we use default parameters with a temperature of 
 0 K so that particles remain in their initial positions throughout the simulation.
 This enables us to model the number of particle-particle interactions as the 
 constant value. Figure 1 shows the runtimes for the force computation on 
 a single processor with the problem size increasing from 4000 to 4000000 
 atoms. Runtimes increase linearly in the number of atoms. \\
 
-\noindent All scaling and baseline results are obtained on Blue Waters by compiling 
+ All scaling and baseline results are obtained on Blue Waters by compiling 
 \texttt{CoMD} with the default Cray compiler (optimization flags: \texttt{-g -O3}).
 
 \begin{table}[h!]
@@ -162,7 +162,7 @@ by the processor clock rate (2.3 GHz) and the results of the \texttt{STREAM} ben
 on Blue Waters. \\
 
 \subsection{Computation-based performance model}
-\noindent Our performance model is based on the cost of updating variables associated
+ Our performance model is based on the cost of updating variables associated
 with particle $i$ due to interactions with each of it's $n$ neighboring atoms, $j$. Specifically,
 the potential energy $U_{LJ}$ between the pair of atoms is computed as
 \begin{align}
@@ -207,7 +207,7 @@ where the factor of $1/2$ accounts for double counting particles in pairwise int
 that is, the interaction between particle $i$ and particle $j$ is the same as the interaction 
 between particle $j$ and particle $i$ making it unnecessary to compute both interactions. \\
 
-\noindent Let $c$ be the cost of a floating point operation, $w$ be the cost of a write, 
+ Let $c$ be the cost of a floating point operation, $w$ be the cost of a write, 
 and $r$ be the cost of a read. Then the cost can be approximated as
 \begin{equation}
     N \left(\frac{n}{2} \left(26 c + 3 w\right) + 3 w\right) + c + 4 r,
@@ -247,7 +247,7 @@ for the number of operations required to compute the inter-particle forces.
 To better understand our baseline results, we also develop a performance model 
 that captures the features of the algorithm's implementation. \\
 
-\noindent The data structure used for storing the computational particles is a
+ The data structure used for storing the computational particles is a
 struct of linear C arrays. Each linear array is divided into equal sized sections which 
 store information for particles in a region of the simulation domain. 
 Section size is the maximum number of particles per region of space, 
@@ -255,7 +255,7 @@ and does not change throughout the simulation.
 This ordering of particles is used to efficiently determine, which particle pairs are within 
 the cutoff radius. \\
 
-\noindent However, this still requires work to ``check'' whether a particle 
+ However, this still requires work to ``check'' whether a particle 
 is within the cut-off radius. Specifically, the inter-particle distance is computed as
 \begin{align*}
     \| \bm{r}_i - \bm{r}_j\|_2^2,
@@ -321,7 +321,7 @@ force calculation routines, both of which are beyond the scope of this
 project. The results from our modifications are shown in figure
 \ref{fig:mod-force}.
 
-\noindent The force compute function uses a large number of pointer dereferences
+ The force compute function uses a large number of pointer dereferences
 to access the arrays storing particle information. For example, accessing the $m^{th}$ 
 component of the position vector corresponding to particle $i$ requires two pointer 
 dereferences: \texttt{s->atoms->r[iOff][m]}. From the code report generated by the Cray 
@@ -330,13 +330,13 @@ pointers were accessed in the innermost loop of the force calculation.
 Thus, a simple optimization is to dereference these pointers outside the computation 
 loops (\ref{apd:code-changes}). \\
 
-\noindent In addition, small loops over a set of 3 real variables are frequently used to
+ In addition, small loops over a set of 3 real variables are frequently used to
 work with position $\bm{r}$ and force $\textbf{F}$ vectors. Not only does this prevent the pipelining
 of instructions, but this also requires additional clock cycles to execute branch instructions.
 Accordingly, we unrolled all of these loops by hand. The inner loop of the force calculation 
 routine is shown before and after optimization in appendix \ref{apd:code-changes}. \\
 
-\noindent The Cray compiler reports tell us that no vectorization
+ The Cray compiler reports tell us that no vectorization
 occurs during the force calculation. After some investigation, we
 determined that this is, in fact, the correct behavior as the data
 structure does not guarantee that pointers to arrays associated with
@@ -354,12 +354,12 @@ that such substantial modifications were beyond the scope of this project. \\
 %    \label{fig:mod-force}
 % \end{figure}
 
-\noindent Another potential improvement considered was changing the order of
+ Another potential improvement considered was changing the order of
 particles within a cell to improve memory access patterns. However, as the
 current implementation already sorts the particles within a cell regularly, it is unlikely 
 that we could substantially improve upon its current performance. \\
 
-\noindent The above modifications led to a 1.24-1.27 speed-up using
+ The above modifications led to a 1.24-1.27 speed-up using
 the Cray compiler; however, runtimes are still much higher than our
 performance expectations. With these changes the gcc compiler only
 experienced a speed-up of 1.04-1.05. It is likely that the gcc
@@ -376,7 +376,7 @@ made only minor improvements.
 % \end{figure}
 
 \section{Conclusion}
-\noindent In summary, we ran scaling studies and profiled the \texttt{CoMD} code base to 
+ In summary, we ran scaling studies and profiled the \texttt{CoMD} code base to 
 determine a routine that could be targeted to enhance performance. We then created a 
 {\bf performance expectation} for the Lennard-Jones force compute function and used this performance 
 model to make modifications to this computationally intensive routine. We obtained speed-ups of
