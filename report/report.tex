@@ -52,40 +52,39 @@ while being simple to understand and modify \cite{CoMD}. \\
 \end{itemize}
 
 \section{Background}
-A molecular dynamics simulation models the movements of individual particles over time. 
-Particle motion is determined by Newton's well-known equation of motion, $F = ma$. 
-In an $N$-particle simulation, the force acting on particle $i$ at position 
-$\bm{r}_i = (x_i, y_i, z_i)$ is given by
+A molecular dynamics simulation models the movement and interactions
+of a discrete set of simulation particles over time. In an
+$N$-particle simulation, the force acting on particle $i$ at
+$\bm{r}_i$ is given by
 \begin{align*}
     \textbf{F}_i = m_i \ddot{\bm{r}}_i = -\frac{\partial}{\partial \bm{r}_i} U(\bm{r}_1, \dots, \bm{r}_N)
 \end{align*}
-where $U$ is the potential energy from particle-particle interactions \cite{Intro}.
-The resulting system of first order ODEs is integrated to find the positions of particles
-at each time step. The \texttt{CoMD} mini-application computes force using the truncated 
-Lennard-Jones potential, where the the potential between a pair of particles, call $i$ and $j$,
-is given by
-\begin{align}
+where $U$ is the potential energy from particle-particle interactions
+\cite{Intro}.  The resulting system of first order ODEs is integrated
+to find the positions of particles at each time step. The
+\texttt{CoMD} mini-application computes potentials using the truncated
+Lennard-Jones potential, where the the potential between a pair of
+particles is given by
+\begin{equation}
 U_{LJ_{trunc}}(r_{ij}) = 
 \left\{ \begin{array}{l c} 
      U_{LJ}(r_{ij}) - U_{LJ}(r_c) & r_{ij} \le r_c \\
      0 & r_{ij} > r_c
-    \end{array} \right.
-\end{align}
+        \end{array} \right.
+      \label{eqn:pot}
+\end{equation}
 where
-\begin{align}
+\begin{equation}
     U_{LJ}(r) = 
     4 \epsilon \left\{ \left(\frac{\sigma}{r}\right)^{12} - 
     \left(\frac{\sigma}{r}\right)^6 \right\}
-\end{align}
-is the Lennard-Jones potential,
-\begin{align}
-    r_{ij} = \sqrt{(x_i - x_j)^2 + (y_i - y_j)^2 + (z_i - z_j)^2}, 
-\end{align}
-is the distance between particles and $r_c = 2.5 \sigma$ is the cut-off radius for 
-particle-particle interactions. In particular, the cut-off radius defines a sphere with
-volume within which pair potentials must be computed. Material parameters 
-$\epsilon$ and $\sigma$ are the potential well depth and distance at which the 
-pair potential becomes zero, respectively \cite{Wiki}. 
+\end{equation}
+is the Lennard-Jones potential and $r_{ij} = \|\v{r}_i-\v{r}_j\|_2$ is
+the distance between particles. The potential \ref{eqn:pot} decays
+rapidly, so interactions are calculated only within a cutoff radius
+$r_c = 2.5 \sigma$. Material parameters $\epsilon$ and $\sigma$ are
+the potential well depth and distance at which the pair potential
+becomes zero, respectively \cite{Wiki}.
 
 \section{Performance baseline}
 \texttt{CoMD} includes a default simulation of Copper atoms in a face-centered 
