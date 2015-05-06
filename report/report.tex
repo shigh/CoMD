@@ -175,6 +175,7 @@ on Blue Waters. \\
 \end{figure}
 
 \subsection{Computation-based performance model}
+\label{sec:comp-based-perf}
 We first develop a performance model that represents the best
 performance a force calculation algorithm can possibly achieve. Our
 model is based on the cost of updating variables associated with
@@ -250,27 +251,26 @@ magnitude less than our experimental results.
 % \end{figure}
 
 \subsection{Implementation-based model}
-The computation-based performance model represents a best case scenario 
-for the number of operations required to compute the inter-particle forces. 
-To better understand our baseline results, we also develop a performance model 
-that captures the features of the algorithm's implementation. \\
+The computation-based performance model from section
+\ref{sec:comp-based-perf} represents a best case scenario for the
+number of operations required to compute the inter-particle forces.
+To better understand our baseline results, we also develop a
+performance model that captures the algorithm's implementation.
+\\
 
- The data structure used for storing the computational particles is a
-struct of linear C arrays. Each linear array is divided into equal sized sections which 
-store information for particles in a region of the simulation domain. 
-Section size is the maximum number of particles per region of space, 
-and does not change throughout the simulation. 
-This ordering of particles is used to efficiently determine, which particle pairs are within 
-the cutoff radius. \\
-
- However, this still requires work to ``check'' whether a particle 
-is within the cut-off radius. Specifically, the inter-particle distance is computed as
-\begin{align*}
-    \| \bm{r}_i - \bm{r}_j\|_2^2,
-\end{align*}
-which requires an additional 3 reads, 3 subtractions, 3 multiplications, and 2 additions.
-If we denote the number of particles checked, which are not within the sphere defined 
-by $r_c$, as $k$, then our performance model can be updated
+The data structure used for storing the computational particles is a
+struct of linear C arrays. Each linear array is divided into equal
+sized sections which store information for particles in a region of
+the simulation domain.  Section size is the maximum number of
+particles per region of space, and does not change throughout the
+simulation.  This ordering of particles is used to efficiently
+determine, which particle pairs are within the cutoff radius.
+However, this still requires work to ``check'' whether a particle is
+within the cut-off radius. Specifically, the inter-particle distance
+is computed as $\| \bm{r}_i - \bm{r}_j\|_2^2$, which requires 3 reads,
+3 subtractions, 3 multiplications, and 2 additions.  If we denote the
+number of particles checked which are not within the sphere defined by
+$r_c$ as $k$, then our performance model becomes
 \begin{equation}
   N \left(\frac{n}{2} \left(26 c + 3 m\right)+\frac{k}{2} \left(8 c + 3 m\right) + 3 m\right) + c + 4 m
   \label{eqn:perf-model-nk}
@@ -283,23 +283,22 @@ performance model \ref{eqn:perf-model-nk} to give
   N \left(n \left(26 c + 3 m\right)+k \left(8 c + 3 m\right) + 3 m\right) + c + 4 m
   \label{eqn:perf-model-2n2k}
 \end{equation}
-The results of these implementation-based performance model are shown
-in figure \ref{fig:perf-models} for increasing $N$. These
-implementation-based performance models scale linearly with the number
-of atoms and appear much closer to our experimental results; however,
-our performance expectation is still nearly an order of magnitude less
-than our baseline.
+The results of these implementation-based performance models are shown
+in figure \ref{fig:perf-models}. These models scale linearly with the
+number of atoms and appear much closer to our experimental results;
+however, our performance expectation is still nearly an order of
+magnitude less than our baseline.
 
 \section{Compiler choice}
 The baseline results using the Cray compiler compare poorly with the
 performance models as shown in figure \ref{fig:perf-models}. We were
 unable to determine why the Cray compiler has such poor performance
-and obtained an additional baseline using the \texttt{CoMD} code
-compiled with gcc 4.7.1. This compiler change alone resulted in a 3.5
-times speed-up. The gcc baseline and performance models are also shown
-in figure \ref{fig:perf-models}. From this we see that our
-implementation based performance model is consistent with the baseline
-run using the gcc compiler.
+and ran an additional baseline using the \texttt{CoMD} code compiled
+with gcc 4.7.1. This compiler change alone resulted in a 3.5 times
+speed-up. The gcc baseline and performance models are also shown in
+figure \ref{fig:perf-models}. From this we see that our implementation
+based performance model is consistent with the baseline run using the
+gcc compiler.
 
 % \begin{figure}[h!]
 %   \centering
@@ -328,31 +327,35 @@ changes to the underlying data structures or a complete rewrite of the
 force calculation routines, both of which are beyond the scope of this
 project. The results from our modifications are shown in figure
 \ref{fig:mod-force}.
+\\
 
- The force compute function uses a large number of pointer dereferences
-to access the arrays storing particle information. For example, accessing the $m^{th}$ 
-component of the position vector corresponding to particle $i$ requires two pointer 
-dereferences: \texttt{s->atoms->r[iOff][m]}. From the code report generated by the Cray 
-compiler, it was clear that these dereferences were being done {\bf each time} the
-pointers were accessed in the innermost loop of the force calculation. 
-Thus, a simple optimization is to dereference these pointers outside the computation 
-loops (\ref{apd:code-changes}). \\
+The force compute function uses a large number of pointer dereferences
+to access the arrays storing particle information. For example,
+accessing the $m^{th}$ component of the position vector corresponding
+to particle $i$ requires two pointer dereferences:
+\texttt{s->atoms->r[iOff][m]}. From the code report generated by the
+Cray compiler, it was clear that these dereferences were being done
+{\bf each time} the pointers were accessed in the innermost loop of
+the force calculation.  Thus, a simple optimization is to dereference
+these pointers outside the computation loops.  In addition, small
+loops over a set of 3 real variables are frequently used to work with
+position and force vectors. Not only does this prevent the pipelining
+of instructions, but this also requires additional clock cycles to
+execute branch instructions.  Accordingly, we unrolled all of these
+loops by hand. The inner loop of the force calculation routine is
+shown before and after optimization in appendix
+\ref{apd:code-changes}.
+\\
 
- In addition, small loops over a set of 3 real variables are frequently used to
-work with position $\bm{r}$ and force $\textbf{F}$ vectors. Not only does this prevent the pipelining
-of instructions, but this also requires additional clock cycles to execute branch instructions.
-Accordingly, we unrolled all of these loops by hand. The inner loop of the force calculation 
-routine is shown before and after optimization in appendix \ref{apd:code-changes}. \\
-
- The Cray compiler reports tell us that no vectorization
-occurs during the force calculation. After some investigation, we
-determined that this is, in fact, the correct behavior as the data
-structure does not guarantee that pointers to arrays associated with
-particle data are not aliased.  Specifically, aliasing does occur when
-calculating the interactions between particles within the same
-cell. We considered modifying the data structure to remove aliasing;
-however, we decided
-that such substantial modifications were beyond the scope of this project. \\
+The Cray compiler reports tell us that no vectorization occurs during
+the force calculation. After some investigation, we determined that
+this is, in fact, the correct behavior as the data structure does not
+guarantee that pointers to arrays associated with particle data are
+not aliased.  Aliasing does occur when calculating the interactions
+between particles within the same cell. We considered modifying the
+data structure to remove aliasing; however, we decided that such
+substantial modifications were beyond the scope of this project.
+\\
 
 % \begin{figure}[h!]
 %   \centering
@@ -384,15 +387,19 @@ made only minor improvements.
 % \end{figure}
 
 \section{Conclusion}
- In summary, we ran scaling studies and profiled the \texttt{CoMD} code base to 
-determine a routine that could be targeted to enhance performance. We then created a 
-{\bf performance expectation} for the Lennard-Jones force compute function and used this performance 
-model to make modifications to this computationally intensive routine. We obtained speed-ups of
-\#-\#; however, the biggest differences in performance were due to the choice of compiler. \\
-Finally, we adapted our performance expectation to include implementation details, which could allow 
-others to determine how changing the data structure to reduce accesses to particles outside 
-the cut-off radius would impact performance before spending time implementing such substantial changes 
-to \texttt{CoMD}.
+We ran scaling studies and profiled the \texttt{CoMD} code base to
+determine routines that could be most profitably optimized. We
+determined that the most likely place for performance improvement was
+the Lennard-Jones force compute function. We developed both ideal and
+implementation specific performance models for the Lennard-Jones force
+compute function. These models were used as guides while attempting
+optimization. We obtained speed-ups of 1.24-1.27; however, the biggest
+differences in performance were due to the choice of compiler. We
+tried a separate compiler (gcc) as a direct result of the failure of
+the Cray compiled code to meet performance expectations, a step we
+would likely not have taken otherwise.
+\\
+
 
 \begin{thebibliography}{}
     \bibitem{CoMD} ADD ME
