@@ -155,12 +155,6 @@ $T = 3000 K$ & 64 & 4.7e-0/96.7\% & 2.3e-2/0.5\% & 6.0e-1/96.2\% & 4.2e-3/0.7\% 
 \label{tbl:times}
 \end{table}
 
-% \begin{figure}[h!]
-%     \centering
-%     \includegraphics[width=0.45\textwidth]{../figs/baseline_forceLJ.pdf}
-%     \caption{Time spent in force computation function on a single processor}
-% \end{figure}
-
 \section{Performance model}
 All analysis assumes a one-level cache model and approximates read and write 
 times as equal.  The constants used in the performance expectations are determined 
@@ -243,13 +237,6 @@ computation-based performance model scale linearly with the number of
 atoms, however our performance expectation is nearly 2 orders of
 magnitude less than our experimental results.
 
-% \begin{figure}[h!]
-%   \centering
-%   \includegraphics[width=0.45\textwidth]{../figs/perfmodel_forceLJ.pdf}
-%   \caption{Computation-based performance model and baseline results}
-%   \label{fig:comp-baseline}
-% \end{figure}
-
 \subsection{Implementation-based model}
 The computation-based performance model from section
 \ref{sec:comp-based-perf} represents a best case scenario for the
@@ -299,13 +286,6 @@ speed-up. The gcc baseline and performance models are also shown in
 figure \ref{fig:perf-models}. From this we see that our implementation
 based performance model is consistent with the baseline run using the
 gcc compiler.
-
-% \begin{figure}[h!]
-%   \centering
-%   \includegraphics[width=0.9\textwidth]{../figs/compiler_forceLJ.pdf}
-%   \caption{Effects of compiler choice}
-%   \label{fig:comp-choice}
-% \end{figure}
 
 \section{Modifications}
 \label{sec:mods}
@@ -357,14 +337,6 @@ data structure to remove aliasing; however, we decided that such
 substantial modifications were beyond the scope of this project.
 \\
 
-% \begin{figure}[h!]
-%   \centering
-%   \includegraphics[width=0.9\textwidth]{../figs/compiler_forceLJ.pdf}
-%   \caption{Runtime and speedups from the modifications described in
-%    section \ref{sec:mods}}
-%    \label{fig:mod-force}
-% \end{figure}
-
  Another potential improvement considered was changing the order of
 particles within a cell to improve memory access patterns. However, as the
 current implementation already sorts the particles within a cell regularly, it is unlikely 
@@ -376,15 +348,6 @@ performance expectations. With these changes the gcc compiler only
 experienced a speed-up of 1.04-1.05. It is likely that the gcc
 compiler had already made similar optimizations, so our manual editing
 made only minor improvements.
-% ; however, we have not been able
-% to identify the causes of the remaining discrepancy between compilers
-% as both compiler reports show no vectorization.
-
-% \begin{figure}[h!]
-%   \centering
-%   \includegraphics[width=0.9\textwidth]{../figs/futurework_forceLJ.pdf}
-%   \caption{Desired speed-ups}
-% \end{figure}
 
 \section{Conclusion}
 We ran scaling studies and profiled the \texttt{CoMD} code base to
@@ -402,7 +365,7 @@ would likely not have taken otherwise.
 
 
 \begin{thebibliography}{}
-    \bibitem{CoMD} ADD ME
+\bibitem{CoMD} \url{https://exmatex.github.io/CoMD/}
     \bibitem{Intro} Allen, Michael P. Introduction to Molecular Dynamics Simulation. 
       {\it Computational Soft Matter: From Synthetic Polymers to Proteins, Lecture Notes}, 
       Norbert Attig, Kurt Binder, Helmut Grubmuller, Kurt Kremer (Eds.),
