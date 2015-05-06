@@ -259,7 +259,7 @@ the simulation domain.  Section size is the maximum number of
 particles per region of space, and does not change throughout the
 simulation.  This ordering of particles is used to efficiently
 determine, which particle pairs are within the cutoff radius.
-However, this still requires work to ``check'' whether a particle is
+However, this still requires work to check whether a particle is
 within the cut-off radius. Specifically, the inter-particle distance
 is computed as $\| \bm{r}_i - \bm{r}_j\|_2^2$, which requires 3 reads,
 3 subtractions, 3 multiplications, and 2 additions.  If we denote the
@@ -277,11 +277,14 @@ performance model \ref{eqn:perf-model-nk} to give
   N \left(n \left(26 c + 3 m\right)+k \left(8 c + 3 m\right) + 3 m\right) + c + 4 m
   \label{eqn:perf-model-2n2k}
 \end{equation}
-The results of these implementation-based performance models are shown
-in figure \ref{fig:perf-models}. These models scale linearly with the
-number of atoms and appear much closer to our experimental results;
-however, our performance expectation is still nearly an order of
-magnitude less than our baseline.
+Using this data structure the smallest possible region of space where
+particles may interact is a cube with sides $3r_c$, so we estimate
+$k\approx 4(3r_c)^3-n\approx 375$. The results of these
+implementation-based performance models are shown in figure
+\ref{fig:perf-models}. These models scale linearly with the number of
+atoms and appear much closer to our experimental results; however, our
+performance expectation is still nearly an order of magnitude less
+than our baseline.
 
 \section{Compiler choice}
 The baseline results using the Cray compiler compare poorly with the
