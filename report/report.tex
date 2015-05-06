@@ -46,7 +46,7 @@ which is a code base designed to expose core features of molecular dynamics simu
 while being simple to understand and modify \cite{CoMD}. \\
  Our contributions include
 \begin{itemize}
-    \item [(1)] A {\bf performance expectation} for the Lennard-Jones force computate function.
+    \item [(1)] A {\bf performance expectation} for the Lennard-Jones force compute function.
     \item [(2)] Simple code {\bf modifications} which improve performance by 25-27\%.
     \item [(3)] An illustration that {\bf compiler choice} impacts compute function performance.
 \end{itemize}
@@ -377,8 +377,9 @@ would likely not have taken otherwise.
 \appendix
 \section{Code changes}
 \label{apd:code-changes}
-The changes made to the inner loop in the force cacluation are shown
-here.
+The changes made to the inner loop in the force calculation are shown
+here with comments removed.
+
 \subsection{Initial Inner Force Loop}
 \begin{lstlisting}
   real_t dr[3];
