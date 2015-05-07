@@ -53,7 +53,7 @@ while being simple to understand and modify \cite{CoMD}. \\
 \end{itemize}
 
 \section{Background}
-Molecular dynamics simulations model evolution in phase space of a
+Molecular dynamics simulations model the evolution in phase space of a
 discrete set of simulation particles in time. In an $N$-particle
 simulation, the force acting on particle $i$ at $\bm{r}_i$ is given by
 \begin{align*}
@@ -63,8 +63,8 @@ where $U$ is the potential energy from particle-particle interactions
 \cite{Intro}.  The resulting system of first order ODEs is integrated
 to find the positions of particles at each time step. The
 \texttt{CoMD} mini-application computes potentials using the truncated
-Lennard-Jones potential, where the potential between a pair of
-particles is given by
+Lennard-Jones model, where the potential between a pair of particles
+is given by
 \begin{equation}
 U_{LJ_{trunc}}(r_{ij}) = 
 \left\{ \begin{array}{l c} 
@@ -100,8 +100,7 @@ face-centered cubic (FCC) lattice with a fully periodic domain and a
 spacing of $3.615 \text{ \AA}$.  Material parameters are defined as
 $\epsilon = 0.167 \text{ eV}$ and $\sigma = 2.315 \text{ \AA}$
 \cite{CoMD}. We can then approximate the number of particles $n$
-within the cut-off radius of each particle at lattice initialization
-as
+within the cut-off radius of each particle at initialization as
 \begin{align}
      \bigg( \frac{4}{3} \pi (2.5 \cdot 2.315)^3 \text{ \AA}^3 \bigg) \times
      \bigg( \frac{4 \text{ particles}}{3.615 \text{ \AA} \times 3.615 \text{ \AA} \times 3.615 \text{ \AA}} \bigg)
@@ -181,8 +180,8 @@ We first develop a performance model that represents the best
 performance a force calculation algorithm can possibly achieve. Our
 model is based on the cost of updating variables associated with
 particle $i$ due to interactions with each of it's $n$ neighboring
-atoms, $j$. Specifically, the potential energy $U_{LJ}$ between the
-pair of atoms is computed as
+atoms. Specifically, the potential energy $U_{LJ}$ between a pair of
+atoms is computed as
 \begin{align}
     U_{LJ}(r_{ij}) = A\left(\frac{1}{r_{ij}}\right)^{6}\left\{ \left(\frac{1}{r_{ij}}\right)^{6} - 1 \right\},           
 \end{align}            
@@ -196,7 +195,7 @@ and the resulting force $\textbf{F}$ is computed as
 \end{align}
 where $N$ is the total number of particles in the simulation and $n$
 is the number of particles within a sphere defined by the cut-off
-radius, $r_c$. In addition, the total energy of the system
+radius $r_c$. In addition, the total energy of the system
 \begin{align}
     E_{tot} &= \sum_{ij} U_{LJ}(r_{ij}),
 \end{align}
@@ -236,7 +235,7 @@ which reduces to
 \end{equation}
 assuming equal read and write times $m$. Specifically, we approximate
 $c = 4.35\times10^{-10}\;\text{flops}/s$ using the processor clock
-rate and $m = 1.43\times10^{-9}\;\text{B}/s$ using the STREAM
+rate and $m = 1.43\times10^{-9}\;\text{(8B)}/s$ using the STREAM
 benchmark on Bluewaters. We estimate $n = 69$ from the cut-off radius
 and lattice parameters. The results of this performance model are
 shown in figure \ref{fig:perf-models}. Both our results and the
@@ -258,7 +257,7 @@ sized sections which store information for particles in a region of
 the simulation domain.  Section size is the maximum number of
 particles per region of space, and does not change throughout the
 simulation.  This ordering of particles is used to efficiently
-determine, which particle pairs are within the cutoff radius.
+determine which particle pairs are within the cutoff radius.
 However, this still requires work to check whether a particle is
 within the cut-off radius. Specifically, the inter-particle distance
 is computed as $\| \bm{r}_i - \bm{r}_j\|_2^2$, which requires 3 reads,
@@ -271,7 +270,7 @@ $r_c$ as $k$, then our performance model becomes
 \end{equation}
 In addition, the actual implementation does not compute interactions
 and distance checks once but rather does so for each particle. This
-doubles the number of interactions and distance checks in our the
+doubles the number of interactions and distance checks in the
 performance model \ref{eqn:perf-model-nk} to give
 \begin{equation}
   N \left(n \left(26 c + 3 m\right)+k \left(8 c + 3 m\right) + 3 m\right) + c + 4 m
