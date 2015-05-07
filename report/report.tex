@@ -63,7 +63,7 @@ where $U$ is the potential energy from particle-particle interactions
 \cite{Intro}.  The resulting system of first order ODEs is integrated
 to find the positions of particles at each time step. The
 \texttt{CoMD} mini-application computes potentials using the truncated
-Lennard-Jones potential, where the the potential between a pair of
+Lennard-Jones potential, where the potential between a pair of
 particles is given by
 \begin{equation}
 U_{LJ_{trunc}}(r_{ij}) = 
@@ -80,8 +80,8 @@ where
     \left(\frac{\sigma}{r}\right)^6 \right\}
 \end{equation}
 is the Lennard-Jones potential and $r_{ij} = \|\v{r}_i-\v{r}_j\|_2$ is
-the distance between particles. The potential \ref{eqn:pot} decays
-rapidly, so interactions are calculated only within a cutoff radius
+the distance between particles. As the potential \ref{eqn:pot} decays
+rapidly, interactions are calculated only within a cutoff radius
 $r_c = 2.5 \sigma$. Material parameters $\epsilon$ and $\sigma$ are
 the potential well depth and distance at which the pair potential
 becomes zero, respectively \cite{Wiki}.
@@ -159,8 +159,8 @@ $T = 3000 K$ & 64 & 4.7e-0/96.7\% & 2.3e-2/0.5\% & 6.0e-1/96.2\% & 4.2e-3/0.7\% 
 \end{table}
 
 \section{Performance model}
-In developing performance models we assume a one-level cache model and
-approximates read and write times as equal.  The constants used in the
+In developing performance models, we assume a one-level cache model and
+approximate read and write times as equal.  The constants used in the
 performance expectations are determined by the processor clock rate
 and the results of the \texttt{STREAM} benchmark on Blue Waters.
 \\
@@ -196,7 +196,7 @@ and the resulting force $\textbf{F}$ is computed as
 \end{align}
 where $N$ is the total number of particles in the simulation and $n$
 is the number of particles within a sphere defined by the cut-off
-radius, $r_c$. In addition, the total energy of the system $E_{tot}$
+radius, $r_c$. In addition, the total energy of the system
 \begin{align}
     E_{tot} &= \sum_{ij} U_{LJ}(r_{ij}),
 \end{align}
